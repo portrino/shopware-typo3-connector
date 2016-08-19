@@ -140,7 +140,8 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
      */
     public function checkLicense($throwException = TRUE) {
 
-        if ($this->Application()->Environment() === 'dev') {
+        if ($this->Application()->Environment() === 'dev' ||
+            $this->Application()->Environment() === 'staging') {
             return TRUE;
         }
 
