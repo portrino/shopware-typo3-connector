@@ -9,7 +9,6 @@ use Portrino\Typo3Connector\Components\ApiUrlDecorator\ApiCategoriesUrlDecorator
  * Proprietary and confidential
  * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
  */
-
 class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_Components_Plugin_Bootstrap {
 
     /**
@@ -77,6 +76,11 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
      * @return bool
      */
     public function install() {
+        /**
+         * general licence check
+         */
+        $this->checkLicense();
+
         $this->subscribeEvents();
 
         return TRUE;
@@ -129,6 +133,49 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
     public function onApiCategoriesPostDispatchSecure(\Enlight_Event_EventArgs $args) {
         $apiUrlDecorator = new ApiCategoriesUrlDecorator($args->get('subject'));
         return $apiUrlDecorator->addPxShopwareUrl();
+    }
+
+    /**
+     * checkLicense()-method for Port1Typo3Connector
+     */
+    public function checkLicense($throwException = TRUE) {
+
+        if ($this->Application()->Environment() === 'dev') {
+            return TRUE;
+        }
+
+        if (!Shopware()->Container()->has('license')) {
+            if ($throwException) {
+                throw new Exception('The license manager has to be installed and active');
+            } else {
+                return FALSE;
+            }
+        }
+
+        try {
+            static $r, $module = 'Port1Typo3Connector';
+            if (!isset($r)) {
+                $s = base64_decode('zkFJGvtiUOjC2mLx2oGm+nXWV38=');
+                $c = base64_decode('j1/FmuiYqRPoptzEjxSF7CZ6HjY=');
+                $r = sha1(uniqid('', TRUE), TRUE);
+                /** @var $l Shopware_Components_License */
+                $l = $this->Application()->License();
+                $i = $l->getLicense($module, $r);
+                $t = $l->getCoreLicense();
+                $u = strlen($t) === 20 ? sha1($t . $s . $t, TRUE) : 0;
+                $r = $i === sha1($c . $u . $r, TRUE);
+            }
+            if (!$r && $throwException) {
+                throw new Exception('License check for module "' . $module . '" has failed.');
+            }
+            return $r;
+        } catch (Exception $e) {
+            if ($throwException) {
+                throw new Exception('License check for module "' . $module . '" has failed.');
+            } else {
+                return FALSE;
+            }
+        }
     }
 
 }
