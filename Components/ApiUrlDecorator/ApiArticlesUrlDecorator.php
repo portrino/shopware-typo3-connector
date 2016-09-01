@@ -10,23 +10,29 @@ namespace Portrino\Typo3Connector\Components\ApiUrlDecorator;
  */
 
 use Portrino\Typo3Connector\Components\ApiUrlDecorator;
+use Shopware\Components\Routing\Context;
 
 /**
  * Class ApiArticlesUrlDecorator
  *
  * @package Portrino\Typo3Connector\Components\ApiUrlDecorator
  */
-class ApiArticlesUrlDecorator extends ApiUrlDecorator {
+class ApiArticlesUrlDecorator extends ApiUrlDecorator
+{
 
     /**
      * @param int $itemId
      */
-    protected function getItemUrl($itemId) {
+    protected function getItemUrl($itemId)
+    {
+
         $arr = array(
             'sViewport' => 'detail',
             'sArticle' => $itemId,
             'module' => 'frontend',
+            'forceSecure' => true
         );
+
         return $this->controller->Front()->Router()->assemble($arr);
     }
 

@@ -9,12 +9,13 @@ use Portrino\Typo3Connector\Components\ApiUrlDecorator\ApiCategoriesUrlDecorator
  * Proprietary and confidential
  * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
  */
-class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_Components_Plugin_Bootstrap {
+class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_Components_Plugin_Bootstrap
+{
 
     /**
      * @var Shopware\Components\Api\Resource\Article
      */
-    protected $resource = NULL;
+    protected $resource = null;
 
     protected $apiEndpoints = array(
         0 => 'Articles',
@@ -38,8 +39,9 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
      * @return mixed
      * @throws Exception
      */
-    public function getVersion() {
-        return '1.0.3';
+    public function getVersion()
+    {
+        return '2.0.0';
     }
 
     /**
@@ -47,7 +49,8 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
      *
      * @return string
      */
-    public function getLabel() {
+    public function getLabel()
+    {
         return 'TYPO3-Connector';
     }
 
@@ -56,7 +59,8 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
      *
      * @return array
      */
-    public function getInfo() {
+    public function getInfo()
+    {
         return array(
             'version' => $this->getVersion(),
             'autor' => 'portrino GmbH',
@@ -75,7 +79,8 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
      *
      * @return bool
      */
-    public function install() {
+    public function install()
+    {
         /**
          * general licence check
          */
@@ -83,13 +88,14 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
 
         $this->subscribeEvents();
 
-        return TRUE;
+        return true;
     }
 
     /**
      * Is executed after the collection has been added.
      */
-    public function afterInit() {
+    public function afterInit()
+    {
         parent::afterInit();
         $this->Application()->Loader()->registerNamespace('Portrino\\Typo3Connector', $this->Path());
     }
@@ -98,14 +104,16 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
     /**
      * subscribe events
      */
-    private function subscribeEvents() {
+    private function subscribeEvents()
+    {
         /**
          * subscribe to init event for each endpoint controller of REST-API
          */
         foreach ($this->apiEndpoints as $apiEndpoint) {
             $this->subscribeEvent('Enlight_Controller_Action_Init_Api_' . ucfirst($apiEndpoint), 'onInitApi');
             if (class_exists('\Portrino\Typo3Connector\Components\ApiUrlDecorator\Api' . ucfirst($apiEndpoint) . 'UrlDecorator')) {
-                $this->subscribeEvent('Enlight_Controller_Action_PostDispatchSecure_Api_' . ucfirst($apiEndpoint), 'onApi' . ucfirst($apiEndpoint) . 'PostDispatchSecure');
+                $this->subscribeEvent('Enlight_Controller_Action_PostDispatchSecure_Api_' . ucfirst($apiEndpoint),
+                    'onApi' . ucfirst($apiEndpoint) . 'PostDispatchSecure');
             }
         }
     }
@@ -113,7 +121,8 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
     /**
      * @param \Enlight_Event_EventArgs $args
      */
-    public function onInitApi(\Enlight_Event_EventArgs $args) {
+    public function onInitApi(\Enlight_Event_EventArgs $args)
+    {
         /** @var ApiTokenDecorator $apiTokenDecorator */
         $apiTokenDecorator = new ApiTokenDecorator($args->get('subject'));
         return $apiTokenDecorator->addPxShopwareApiToken();
@@ -122,7 +131,8 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
     /**
      * @param \Enlight_Event_EventArgs $args
      */
-    public function onApiArticlesPostDispatchSecure(\Enlight_Event_EventArgs $args) {
+    public function onApiArticlesPostDispatchSecure(\Enlight_Event_EventArgs $args)
+    {
         $apiUrlDecorator = new ApiArticlesUrlDecorator($args->get('subject'));
         return $apiUrlDecorator->addPxShopwareUrl();
     }
@@ -130,7 +140,8 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
     /**
      * @param \Enlight_Event_EventArgs $args
      */
-    public function onApiCategoriesPostDispatchSecure(\Enlight_Event_EventArgs $args) {
+    public function onApiCategoriesPostDispatchSecure(\Enlight_Event_EventArgs $args)
+    {
         $apiUrlDecorator = new ApiCategoriesUrlDecorator($args->get('subject'));
         return $apiUrlDecorator->addPxShopwareUrl();
     }
@@ -138,18 +149,20 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
     /**
      * checkLicense()-method for Port1Typo3Connector
      */
-    public function checkLicense($throwException = TRUE) {
+    public function checkLicense($throwException = true)
+    {
 
         if ($this->Application()->Environment() === 'dev' ||
-            $this->Application()->Environment() === 'staging') {
-            return TRUE;
+            $this->Application()->Environment() === 'staging'
+        ) {
+            return true;
         }
 
         if (!Shopware()->Container()->has('license')) {
             if ($throwException) {
                 throw new Exception('The license manager has to be installed and active');
             } else {
-                return FALSE;
+                return false;
             }
         }
 
@@ -158,13 +171,13 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
             if (!isset($r)) {
                 $s = base64_decode('zkFJGvtiUOjC2mLx2oGm+nXWV38=');
                 $c = base64_decode('j1/FmuiYqRPoptzEjxSF7CZ6HjY=');
-                $r = sha1(uniqid('', TRUE), TRUE);
+                $r = sha1(uniqid('', true), true);
                 /** @var $l Shopware_Components_License */
                 $l = $this->Application()->License();
                 $i = $l->getLicense($module, $r);
                 $t = $l->getCoreLicense();
-                $u = strlen($t) === 20 ? sha1($t . $s . $t, TRUE) : 0;
-                $r = $i === sha1($c . $u . $r, TRUE);
+                $u = strlen($t) === 20 ? sha1($t . $s . $t, true) : 0;
+                $r = $i === sha1($c . $u . $r, true);
             }
             if (!$r && $throwException) {
                 throw new Exception('License check for module "' . $module . '" has failed.');
@@ -174,7 +187,7 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
             if ($throwException) {
                 throw new Exception('License check for module "' . $module . '" has failed.');
             } else {
-                return FALSE;
+                return false;
             }
         }
     }

@@ -10,72 +10,88 @@ namespace Portrino\Typo3Connector\Components;
  */
 
 use Shopware\Components\Api\Manager;
+use Shopware\Components\Api\Resource\Shop;
+use Shopware\Components\Routing\Context;
+use Shopware\Models\Shop\DetachedShop;
 
 /**
  * Class ApiUrlDecorator
  *
  * @package Portrino\Typo3Connector\Components
  */
-abstract class ApiUrlDecorator {
+abstract class ApiUrlDecorator
+{
 
     /**
      * @var \Shopware_Controllers_Api_Articles
      */
-    protected $controller = NULL;
+    protected $controller = null;
 
     /**
      * @var \Enlight_Controller_Request_Request
      */
-    protected $request = NULL;
+    protected $request = null;
 
     /**
      * @var \Enlight_View_Default
      */
-    protected $view = NULL;
+    protected $view = null;
 
     /**
-     * @var \Shopware\Components\Api\Resource\Shop
+     * @var Shop
      */
-    protected $shopResource = NULL;
+    protected $shopResource = null;
 
     /**
-     * @var \Shopware\Models\Shop\DetachedShop
+     * @var DetachedShop
      */
-    protected $shop = NULL;
+    protected $shop = null;
+
+    /**
+     * @var Context
+     */
+    protected $context = null;
 
     /**
      * @var bool
      */
-    protected $isPxShopwareRequest = FALSE;
+    protected $isPxShopwareRequest = false;
 
     /**
      * ApiTokenDecorator constructor.
      *
      * @param \Enlight_Controller_Action $controller
      */
-    public function __construct(\Enlight_Controller_Action $controller) {
+    public function __construct(\Enlight_Controller_Action $controller)
+    {
         $this->controller = $controller;
         $this->request = $this->controller->Request();
         $this->view = $this->controller->View();
         $this->shopResource = Manager::getResource('shop');
-        $this->isPxShopwareRequest = ($this->request->getParam('px_shopware') != NULL) ? (bool)$this->request->getParam('px_shopware') : FALSE;
+        $this->isPxShopwareRequest = ($this->request->getParam('px_shopware') != null) ? (bool)$this->request->getParam('px_shopware') : false;
 
         if ($this->isPxShopwareRequest) {
-            $language = ($this->request->getParam('language') != NULL) ? (int)$this->request->getParam('language') : FALSE;
-            if ($language != FALSE) {
+            $language = ($this->request->getParam('language') != null) ? (int)$this->request->getParam('language') : false;
+            if ($language != false) {
 //                we could not use this query, because of bug described here: https://issues.shopware.com/#/issues/SW-15388
 //                $this->shop = $this->shopResource->getRepository()->queryBy(array('active' => TRUE, 'locale' => $language))->getOneOrNullResult();
-                $this->shop = $this->shopResource->getRepository()->queryBy(array('active' => TRUE, 'id' => $language))->getOneOrNullResult();
+                $this->shop = $this->shopResource->getRepository()->queryBy(array(
+                    'active' => true,
+                    'id' => $language
+                ))->getOneOrNullResult();
             } else {
                 $this->shop = $this->shopResource->getRepository()->getActiveDefault();
             }
             $router = $this->controller->Front()->Router();
 
-
-
             if ($router instanceof \Shopware\Components\Routing\Router) {
-                $router->getContext()->setShopId($this->shop->getId());
+                $router->getContext()->setHost($this->shop->getHost());
                 $router->getContext()->setBaseUrl($this->shop->getBaseUrl());
+                $router->getContext()->setShopId($this->shop->getId());
+                $router->getContext()->setSecure($this->shop->getSecure());
+                $router->getContext()->setAlwaysSecure($this->shop->getAlwaysSecure());
+                $router->getContext()->setSecureHost($this->shop->getSecureHost());
+                $router->getContext()->setSecureBaseUrl($this->shop->getSecureBaseUrl());
             }
         }
     }
@@ -83,10 +99,11 @@ abstract class ApiUrlDecorator {
     /**
      * @param \Enlight_Event_EventArgs $args
      */
-    public function addPxShopwareUrl() {
+    public function addPxShopwareUrl()
+    {
         if ($this->isPxShopwareRequest) {
             try {
-                $dataBefore =  $this->controller->View()->getAssign('data');
+                $dataBefore = $this->controller->View()->getAssign('data');
 
                 $data = $this->controller->View()->getAssign('data');
                 $action = $this->controller->Request()->getActionName();
@@ -94,15 +111,16 @@ abstract class ApiUrlDecorator {
                 if ($action === 'get') {
                     if (is_array($data) && isset($data['id'])) {
                         $url = $this->getItemUrl($data['id']);
-                        $data = array_merge_recursive($this->controller->View()->getAssign('data'), array('pxShopwareUrl' => $url));
+                        $data = array_merge_recursive($this->controller->View()->getAssign('data'),
+                            array('pxShopwareUrl' => $url));
                     }
                 }
-                
+
                 if ($action === 'index') {
                     if (is_array($data)) {
                         // add article urls to each article of the list
                         $items = $this->controller->View()->getAssign('data');
-                        foreach($items as $key => $item) {
+                        foreach ($items as $key => $item) {
                             $item['pxShopwareUrl'] = $this->getItemUrl($item['id']);
                             $items[$key] = $item;
                         }
@@ -129,8 +147,10 @@ abstract class ApiUrlDecorator {
             }
         }
     }
+
     /**
      * @param int $itemId
+     *
      * @return string
      */
     abstract protected function getItemUrl($itemId);

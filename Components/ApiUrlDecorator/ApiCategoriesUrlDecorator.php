@@ -16,12 +16,14 @@ use Portrino\Typo3Connector\Components\ApiUrlDecorator;
  *
  * @package Portrino\Typo3Connector\Components\ApiUrlDecorator
  */
-class ApiCategoriesUrlDecorator extends ApiUrlDecorator {
+class ApiCategoriesUrlDecorator extends ApiUrlDecorator
+{
 
     /**
      * @param int $itemId
      */
-    protected function getItemUrl($itemId) {
+    protected function getItemUrl($itemId)
+    {
         $arr = array(
             'sViewport' => 'cat',
             'sCategory' => $itemId,
