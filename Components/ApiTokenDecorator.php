@@ -35,7 +35,7 @@ class ApiTokenDecorator
     /**
      * appends the "pxShopwareTypo3Token" to the API-Response which will be verified by TYPO3-Extension "px_shopware"
      */
-    public function addPxShopwareApiToken()
+    public function addApiToken()
     {
         $request = $this->controller->Request();
         $pxShopware = ($request->getParam('px_shopware') != null) ? (bool)$request->getParam('px_shopware') : false;

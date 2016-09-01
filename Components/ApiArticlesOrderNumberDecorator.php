@@ -8,18 +8,14 @@ namespace Portrino\Typo3Connector\Components;
  * Proprietary and confidential
  * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
  */
-
-use Shopware\Components\Api\Manager;
-use Shopware\Components\Api\Resource\Shop;
-use Shopware\Components\Routing\Context;
-use Shopware\Models\Shop\DetachedShop;
+use Shopware\Components\Model\QueryBuilder;
 
 /**
- * Class ApiUrlDecorator
+ * Class ApiArticlesOrderNumberDecorator
  *
  * @package Portrino\Typo3Connector\Components
  */
-abstract class ApiUrlDecorator
+class ApiArticlesOrderNumberDecorator
 {
 
     /**
@@ -33,29 +29,14 @@ abstract class ApiUrlDecorator
     protected $request = null;
 
     /**
-     * @var \Enlight_View_Default
-     */
-    protected $view = null;
-
-    /**
-     * @var Shop
-     */
-    protected $shopResource = null;
-
-    /**
-     * @var DetachedShop
-     */
-    protected $shop = null;
-
-    /**
-     * @var Context
-     */
-    protected $context = null;
-
-    /**
      * @var bool
      */
     protected $isPxShopwareRequest = false;
+
+    /**
+     * @var Shopware\Components\Api\Resource\Article
+     */
+    protected $resource = null;
 
     /**
      * ApiTokenDecorator constructor.
@@ -66,53 +47,33 @@ abstract class ApiUrlDecorator
     {
         $this->controller = $controller;
         $this->request = $this->controller->Request();
-        $this->view = $this->controller->View();
-        $this->shopResource = Manager::getResource('shop');
         $this->isPxShopwareRequest = ($this->request->getParam('px_shopware') != null) ? (bool)$this->request->getParam('px_shopware') : false;
 
         if ($this->isPxShopwareRequest) {
-            $language = ($this->request->getParam('language') != null) ? (int)$this->request->getParam('language') : false;
-            if ($language != false) {
-//                we could not use this query, because of bug described here: https://issues.shopware.com/#/issues/SW-15388
-//                $this->shop = $this->shopResource->getRepository()->queryBy(array('active' => TRUE, 'locale' => $language))->getOneOrNullResult();
-                $this->shop = $this->shopResource->getRepository()->queryBy(array(
-                    'active' => true,
-                    'id' => $language
-                ))->getOneOrNullResult();
-            } else {
-                $this->shop = $this->shopResource->getRepository()->getActiveDefault();
-            }
-            $router = $this->controller->Front()->Router();
-
-            if ($router instanceof \Shopware\Components\Routing\Router) {
-                $router->getContext()->setHost($this->shop->getHost());
-                $router->getContext()->setBaseUrl($this->shop->getBaseUrl());
-                $router->getContext()->setShopId($this->shop->getId());
-                $router->getContext()->setSecure($this->shop->getSecure());
-                $router->getContext()->setAlwaysSecure($this->shop->getAlwaysSecure());
-                $router->getContext()->setSecureHost($this->shop->getSecureHost());
-                $router->getContext()->setSecureBaseUrl($this->shop->getSecureBaseUrl());
-            }
+            $this->resource = \Shopware\Components\Api\Manager::getResource('article');
         }
     }
 
     /**
      * @param \Enlight_Event_EventArgs $args
      */
-    public function addUrl()
+    public function addOrderNumber()
     {
         if ($this->isPxShopwareRequest) {
             try {
                 $dataBefore = $this->controller->View()->getAssign('data');
-
                 $data = $this->controller->View()->getAssign('data');
                 $action = $this->controller->Request()->getActionName();
 
                 if ($action === 'get') {
                     if (is_array($data) && isset($data['id'])) {
-                        $url = $this->getItemUrl($data['id']);
+                        if (isset($data['mainDetail']['number'])) {
+                            $orderNumber = $data['mainDetail']['number'];
+                        } else {
+                            $orderNumber = $this->getOrderNumber($data);
+                        }
                         $data = array_merge_recursive($this->controller->View()->getAssign('data'),
-                            array('pxShopwareUrl' => $url));
+                            array('pxShopwareOrderNumber' => $orderNumber));
                     }
                 }
 
@@ -121,12 +82,11 @@ abstract class ApiUrlDecorator
                         // add article urls to each article of the list
                         $items = $this->controller->View()->getAssign('data');
                         foreach ($items as $key => $item) {
-                            $item['pxShopwareUrl'] = $this->getItemUrl($item['id']);
+                            $item['pxShopwareOrderNumber'] = $this->getOrderNumber($item);
                             $items[$key] = $item;
                         }
                         $data = $items;
                     }
-
                 }
 
                 $this->controller->View()->clearAssign('data');
@@ -149,11 +109,45 @@ abstract class ApiUrlDecorator
     }
 
     /**
-     * @param int $itemId
+     * @param array $article
      *
      * @return string
      */
-    abstract protected function getItemUrl($itemId);
+    protected function getOrderNumber($article)
+    {
+        try {
+            /** @var \Doctrine\ORM\QueryBuilder|QueryBuilder $builder */
+            $builder = $this->resource->getManager()->createQueryBuilder();
 
+            $builder->select(array('details'))
+                    ->from('Shopware\Models\Article\Detail', 'details')
+                    ->where('details.id = :mainDetailId')
+                    ->setParameter('mainDetailId', $article['mainDetailId']);
+
+            /** @var $detail \Shopware\Models\Article\Detail */
+            $detail = $builder->getQuery()->getOneOrNullResult();
+
+            if ($detail != null) {
+                return $detail->getNumber();
+            }
+
+        } catch (\Exception $e) {
+            return '';
+        }
+    }
+
+    /**
+     * Internal helper function to get access to the article repository.
+     *
+     * @return Shopware\Models\Article\Repository
+     */
+    protected function getRepository()
+    {
+        if ($this->repository === null) {
+            $this->repository = Shopware()->Models()->getRepository('Shopware\Models\Article\Article');
+        }
+
+        return $this->repository;
+    }
 
 }

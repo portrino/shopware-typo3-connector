@@ -2,6 +2,7 @@
 use Portrino\Typo3Connector\Components\ApiTokenDecorator;
 use Portrino\Typo3Connector\Components\ApiUrlDecorator\ApiArticlesUrlDecorator;
 use Portrino\Typo3Connector\Components\ApiUrlDecorator\ApiCategoriesUrlDecorator;
+use Portrino\Typo3Connector\Components\ApiArticlesOrderNumberDecorator;
 
 /**
  * Copyright (C) portrino GmbH - All Rights Reserved
@@ -110,10 +111,19 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
          * subscribe to init event for each endpoint controller of REST-API
          */
         foreach ($this->apiEndpoints as $apiEndpoint) {
-            $this->subscribeEvent('Enlight_Controller_Action_Init_Api_' . ucfirst($apiEndpoint), 'onInitApi');
+            /**
+             * subscribe init api to all endpoints
+             */
+            $this->subscribeEvent('Enlight_Controller_Action_Init_Api_' . ucfirst($apiEndpoint), 'onInitApiAddToken');
+
             if (class_exists('\Portrino\Typo3Connector\Components\ApiUrlDecorator\Api' . ucfirst($apiEndpoint) . 'UrlDecorator')) {
                 $this->subscribeEvent('Enlight_Controller_Action_PostDispatchSecure_Api_' . ucfirst($apiEndpoint),
-                    'onApi' . ucfirst($apiEndpoint) . 'PostDispatchSecure');
+                    'onApi' . ucfirst($apiEndpoint) . 'AddUrl');
+            }
+
+            if (class_exists('\Portrino\Typo3Connector\Components\Api' . ucfirst($apiEndpoint) . 'OrderNumberDecorator')) {
+                $this->subscribeEvent('Enlight_Controller_Action_PostDispatchSecure_Api_' . ucfirst($apiEndpoint),
+                    'onApi' . ucfirst($apiEndpoint) . 'AddOrderNumber');
             }
         }
     }
@@ -121,29 +131,37 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
     /**
      * @param \Enlight_Event_EventArgs $args
      */
-    public function onInitApi(\Enlight_Event_EventArgs $args)
+    public function onInitApiAddToken(\Enlight_Event_EventArgs $args)
     {
-        /** @var ApiTokenDecorator $apiTokenDecorator */
         $apiTokenDecorator = new ApiTokenDecorator($args->get('subject'));
-        return $apiTokenDecorator->addPxShopwareApiToken();
+        return $apiTokenDecorator->addApiToken();
     }
 
     /**
      * @param \Enlight_Event_EventArgs $args
      */
-    public function onApiArticlesPostDispatchSecure(\Enlight_Event_EventArgs $args)
+    public function onApiArticlesAddUrl(\Enlight_Event_EventArgs $args)
     {
         $apiUrlDecorator = new ApiArticlesUrlDecorator($args->get('subject'));
-        return $apiUrlDecorator->addPxShopwareUrl();
+        return $apiUrlDecorator->addUrl();
     }
 
     /**
      * @param \Enlight_Event_EventArgs $args
      */
-    public function onApiCategoriesPostDispatchSecure(\Enlight_Event_EventArgs $args)
+    public function onApiCategoriesAddUrl(\Enlight_Event_EventArgs $args)
     {
         $apiUrlDecorator = new ApiCategoriesUrlDecorator($args->get('subject'));
-        return $apiUrlDecorator->addPxShopwareUrl();
+        return $apiUrlDecorator->addUrl();
+    }
+
+    /**
+     * @param \Enlight_Event_EventArgs $args
+     */
+    public function onApiArticlesAddOrderNumber(\Enlight_Event_EventArgs $args)
+    {
+        $apiOrderNumberDecorator = new ApiArticlesOrderNumberDecorator($args->get('subject'));
+        return $apiOrderNumberDecorator->addOrderNumber();
     }
 
     /**
