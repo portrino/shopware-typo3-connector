@@ -1,6 +1,6 @@
 <?php
 
-namespace Portrino\Typo3Connector\Components;
+namespace Port1Typo3Connector\Components;
 
 /**
  * Copyright (C) portrino GmbH - All Rights Reserved
@@ -64,7 +64,6 @@ class ApiArticlesOrderNumberDecorator
                 $dataBefore = $this->controller->View()->getAssign('data');
                 $data = $this->controller->View()->getAssign('data');
                 $action = $this->controller->Request()->getActionName();
-
                 if ($action === 'get') {
                     if (is_array($data) && isset($data['id'])) {
                         if (isset($data['mainDetail']['number'])) {

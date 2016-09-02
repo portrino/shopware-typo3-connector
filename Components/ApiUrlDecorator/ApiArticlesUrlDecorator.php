@@ -1,6 +1,6 @@
 <?php
 
-namespace Portrino\Typo3Connector\Components\ApiUrlDecorator;
+namespace Port1Typo3Connector\Components\ApiUrlDecorator;
 
 /**
  * Copyright (C) portrino GmbH - All Rights Reserved
@@ -9,7 +9,7 @@ namespace Portrino\Typo3Connector\Components\ApiUrlDecorator;
  * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
  */
 
-use Portrino\Typo3Connector\Components\ApiUrlDecorator;
+use Port1Typo3Connector\Components\ApiUrlDecorator;
 use Shopware\Components\Routing\Context;
 
 /**
@@ -25,7 +25,6 @@ class ApiArticlesUrlDecorator extends ApiUrlDecorator
      */
     protected function getItemUrl($itemId)
     {
-
         $arr = array(
             'sViewport' => 'detail',
             'sArticle' => $itemId,

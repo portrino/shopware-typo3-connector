@@ -1,6 +1,6 @@
 <?php
 
-namespace Portrino\Typo3Connector\Components;
+namespace Port1Typo3Connector\Components;
 
     /**
      * Copyright (C) portrino GmbH - All Rights Reserved
@@ -12,7 +12,7 @@ namespace Portrino\Typo3Connector\Components;
 /**
  * Class ApiTokenDecorator
  *
- * @package Portrino\Typo3Connector\Components
+ * @package Port1Typo3Connector\Components
  */
 class ApiTokenDecorator
 {

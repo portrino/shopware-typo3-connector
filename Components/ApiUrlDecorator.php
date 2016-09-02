@@ -1,6 +1,6 @@
 <?php
 
-namespace Portrino\Typo3Connector\Components;
+namespace Port1Typo3Connector\Components;
 
 /**
  * Copyright (C) portrino GmbH - All Rights Reserved
