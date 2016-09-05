@@ -2,12 +2,18 @@
 
 namespace Port1Typo3Connector\Service\Notification;
 
-    /**
-     * Copyright (C) portrino GmbH - All Rights Reserved
-     * Unauthorized copying of this file, via any medium is strictly prohibited
-     * Proprietary and confidential
-     * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
-     */
+/**
+ * Copyright (C) portrino GmbH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
+ */
+use Shopware\Components\Model\ModelEntity;
+use Shopware\Components\Model\ModelManager;
+use Shopware\Models\Article\Article;
+use Shopware\Models\Category\Category;
+use Shopware\Models\Media\Media;
+use Shopware\Models\Shop\Shop;
 use Shopware\Models\User\User;
 
 /**
@@ -39,17 +45,26 @@ abstract class NotificationService implements NotificationServiceInterface
     protected $apiKey = false;
 
     /**
-     * NotificationService constructor.
+     * @var ModelManager
      */
-    public function __construct()
-    {
+    private $entityManager;
+
+    /**
+     * CrudService constructor.
+     * @param ModelManager $entityManager
+     */
+    public function __construct(
+        ModelManager $entityManager
+    ) {
+        $this->entityManager = $entityManager;
         $this->initialize();
     }
 
     /**
      * initialize the service
      */
-    protected function initialize() {
+    protected function initialize()
+    {
         $id = Shopware()->Container()->get('auth')->getIdentity()->id;
         $this->user = $this->getUserRepository()->getUserDetailQuery($id)->getOneOrNullResult();
 
@@ -60,18 +75,14 @@ abstract class NotificationService implements NotificationServiceInterface
     /**
      * @return string
      */
-    protected function getApiKey() {
+    protected function getApiKey()
+    {
         $result = '';
         if ($this->user && $this->user instanceof User) {
             $result = $this->user->getApiKey();
         }
         return $result;
     }
-
-    /**
-     * @return string
-     */
-    abstract protected function getConsumerApiUrl();
 
     /**
      * Helper function to get access to the user repository.
@@ -88,31 +99,62 @@ abstract class NotificationService implements NotificationServiceInterface
 
     /**
      * checks if the API key and the consumer API url is set
+     *
+     * @return boolean
      */
-    protected function isApiConfigured() {
+    protected function isApiConfigured()
+    {
         return ($this->apiKey != false && $this->consumerApiUrl != false);
+    }
+
+    /**
+     * checks if the API key and the consumer API url is set
+     * @param Article|Category|Media|Shop $entity
+     *
+     * @return boolean
+     */
+    protected function isRelevantInformation($entity)
+    {
+        $result = true;
+
+        if ($entity instanceof Article) {
+
+//            @todo: check if only stock has changed and prevent notificationService from fire notification then
+//            $uow = $this->entityManager->getUnitOfWork();
+//            $changeset = $uow->getEntityChangeSet($entity);
+//            $changedArticle = $changeset['changed'];
+//            $updates = $uow->getScheduledCollectionUpdates();
+
+        }
+
+        return $result;
     }
 
     /**
      * sends the notification to the consumer system
      *
      * @param string $action
-     * @param string $type
-     * @param int $id
+     * @param ModelEntity|Article|Category|Media|Shop $entity
      */
-    public function notify($action, $type, $id)
+    public function notify($action, $entity)
     {
         if ($this->isApiConfigured()) {
-            $command = new Command($action, $type, $id);
 
+            if ($this->isRelevantInformation($entity)) {
 
-            /**
-             * @todo: Keine Benachrichtigung bei Bestandsänderung
-             */
+                $id = $entity->getId();
+                $type = Command::getTypeFromEntity($entity);
 
-            $this->sendNotification($command);
+                $command = new Command($action, $type, $id);
+                $this->sendNotification($command);
+            }
         }
     }
+
+    /**
+     * @return string
+     */
+    abstract protected function getConsumerApiUrl();
 
     /**
      * @param Command $command

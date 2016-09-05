@@ -2,14 +2,17 @@
 
 namespace Port1Typo3Connector\Service\Notification;
 
-    /**
-     * Copyright (C) portrino GmbH - All Rights Reserved
-     * Unauthorized copying of this file, via any medium is strictly prohibited
-     * Proprietary and confidential
-     * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
-     */
+/**
+ * Copyright (C) portrino GmbH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
+ */
 
-use Shopware\Models\User\User;
+use Shopware\Models\Article\Article;
+use Shopware\Models\Category\Category;
+use Shopware\Models\Media\Media;
+use Shopware\Models\Shop\Shop;
 
 /**
  * Class NotificationService
@@ -20,13 +23,19 @@ class Command
 {
 
     const COMMAND_CREATE = 'create';
+
     const COMMAND_UPDATE = 'update';
+
     const COMMAND_DELETE = 'delete';
 
     const TYPE_ARTICLE = 'article';
+
     const TYPE_CATEGORY = 'category';
+
     const TYPE_MEDIA = 'media';
+
     const TYPE_SHOP = 'shop';
+
     const TYPE_VERSION = 'version';
 
     /**
@@ -82,4 +91,18 @@ class Command
         $this->id = $id;
     }
 
+    /**
+     * @param Article|Category|Media|Shop $entity
+     *
+     * @return string
+     */
+    public static function getTypeFromEntity($entity)
+    {
+        $result = '';
+        /** @var \ReflectionClass $reflection */
+        $reflection = new \ReflectionClass(get_class($entity));
+        $type = $reflection->getShortName();
+
+        return $type;
+    }
 }

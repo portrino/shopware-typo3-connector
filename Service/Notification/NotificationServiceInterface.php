@@ -19,9 +19,8 @@ interface NotificationServiceInterface
     /**
      * sends the notification to the consumer system
      *
-     * @param $action
-     * @param $type
-     * @param $id
+     * @param string $action
+     * @param ModelEntity|Article|Category|Media|Shop $entity
      */
-    public function notify($action, $type, $id);
+    public function notify($action, $entity);
 }

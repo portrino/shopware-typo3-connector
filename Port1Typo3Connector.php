@@ -6,10 +6,8 @@ use Port1Typo3Connector\Components\ApiTokenDecorator;
 use Port1Typo3Connector\Components\ApiUrlDecorator\ApiArticlesUrlDecorator;
 use Port1Typo3Connector\Components\ApiUrlDecorator\ApiCategoriesUrlDecorator;
 use Port1Typo3Connector\Service\Notification\Command;
-use Port1Typo3Connector\Service\Notification\NotificationService;
 use Port1Typo3Connector\Service\Notification\Typo3NotificationService;
 use Shopware\Bundle\AttributeBundle\Service\TypeMapping;
-use Shopware\Bundle\PluginInstallerBundle\Service\PluginLicenceService;
 use Shopware\Bundle\StoreFrontBundle\Struct\Media;
 use Shopware\Components\Model\ModelEntity;
 use Shopware\Components\Model\ModelManager;
@@ -64,6 +62,7 @@ class Port1Typo3Connector extends Plugin
             \Shopware\Models\Article\Article::class . '::preRemove' => 'deleteEntity',
 
             \Shopware\Models\Category\Category::class . '::postPersist' => 'createEntity',
+            \Shopware\Models\Category\Category::class . '::preUpdate ' => 'preUpdateEntity',
             \Shopware\Models\Category\Category::class . '::postUpdate' => 'updateEntity',
             \Shopware\Models\Category\Category::class . '::preRemove' => 'deleteEntity',
 
@@ -104,54 +103,48 @@ class Port1Typo3Connector extends Plugin
     /**
      * @param \Enlight_Event_EventArgs $arguments
      */
-    public function createEntity(\Enlight_Event_EventArgs $arguments) {
+    public function createEntity(\Enlight_Event_EventArgs $arguments)
+    {
         /** @var ModelEntity|Article|Category|Media|Shop $entity */
         $entity = $arguments->get('entity');
-        $reflection = new \ReflectionClass(get_class($entity));
-        $type = strtolower($reflection->getShortName());
 
         /** @var Typo3NotificationService $notificationService */
         $notificationService = $this->container->get('port1_typo3_connector.typo3_notification_service');
         $notificationService->notify(
             Command::COMMAND_CREATE,
-            $type,
-            $entity->getId()
+            $entity
         );
     }
 
     /**
      * @param \Enlight_Event_EventArgs $arguments
      */
-    public function updateEntity(\Enlight_Event_EventArgs $arguments) {
+    public function updateEntity(\Enlight_Event_EventArgs $arguments)
+    {
         /** @var ModelEntity|Article|Category|Media|Shop $entity */
         $entity = $arguments->get('entity');
-        $reflection = new \ReflectionClass(get_class($entity));
-        $type = strtolower($reflection->getShortName());
 
         /** @var Typo3NotificationService $notificationService */
         $notificationService = $this->container->get('port1_typo3_connector.typo3_notification_service');
         $notificationService->notify(
             Command::COMMAND_UPDATE,
-            $type,
-            $entity->getId()
+            $entity
         );
     }
 
     /**
      * @param \Enlight_Event_EventArgs $arguments
      */
-    public function deleteEntity(\Enlight_Event_EventArgs $arguments) {
+    public function deleteEntity(\Enlight_Event_EventArgs $arguments)
+    {
         /** @var ModelEntity|Article|Category|Media|Shop $entity */
         $entity = $arguments->get('entity');
-        $reflection = new \ReflectionClass(get_class($entity));
-        $type = strtolower($reflection->getShortName());
 
         /** @var Typo3NotificationService $notificationService */
         $notificationService = $this->container->get('port1_typo3_connector.typo3_notification_service');
         $notificationService->notify(
             Command::COMMAND_DELETE,
-            $type,
-            $entity->getId()
+            $entity
         );
     }
 
@@ -239,8 +232,8 @@ class Port1Typo3Connector extends Plugin
         /** @var \Shopware $application */
         $application = $this->container->get('application');
 
-        if ($application->Environment() === 'dev' ||
-            $application->Environment() === 'staging'
+        $environment = $this->container->getParameter('kernel.environment');
+        if ($environment === 'dev' || $environment === 'staging'
         ) {
             return true;
         }
@@ -259,7 +252,7 @@ class Port1Typo3Connector extends Plugin
                 $s = base64_decode('zkFJGvtiUOjC2mLx2oGm+nXWV38=');
                 $c = base64_decode('j1/FmuiYqRPoptzEjxSF7CZ6HjY=');
                 $r = sha1(uniqid('', true), true);
-                /** @var $l Shopware_Components_License */
+                /** @var $l \Shopware_Components_Licence */
                 $l = $application->License();
                 $i = $l->getLicense($module, $r);
                 $t = $l->getCoreLicense();
@@ -267,12 +260,12 @@ class Port1Typo3Connector extends Plugin
                 $r = $i === sha1($c . $u . $r, true);
             }
             if (!$r && $throwException) {
-                throw new Exception('License check for module "' . $module . '" has failed.');
+                throw new \Exception('License check for module "' . $module . '" has failed.');
             }
             return $r;
         } catch (\Exception $e) {
             if ($throwException) {
-                throw new Exception('License check for module "' . $module . '" has failed.');
+                throw new \Exception('License check for module "' . $module . '" has failed.');
             } else {
                 return false;
             }

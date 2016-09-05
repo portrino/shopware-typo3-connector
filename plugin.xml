@@ -4,12 +4,44 @@
     <label lang="en">TYPO3-Connector</label>
 
     <version>2.0.0</version>
-    <link>http://example.org</link>
+
+    <copyright>© 2016</copyright>
+
+    <license></license>
+
+    <link>http://www.portrino.de</link>
+
     <author>portrino GmbH</author>
-    <compatibility minVersion="5.2.0" />
+
+    <description lang="de">Ermöglicht die Kommunikation mit der TYPO3-Erweiterung "PxShopware"</description>
+    <description lang="en">Enables communication with TYPO3-Extension "PxShopware".</description>
 
     <changelog version="2.0.0">
-        <changes lang="de">Veröffentlichung</changes>
-        <changes lang="en">Release</changes>
+        <changes lang="de">
+            [FEATURE]   Benachrichtigung von TYPO3 wenn Artikel, Kategorie, Media oder Shop Model hinzugefügt, geändert
+                        oder gelöscht wird
+
+            [FEATURE]   Fügt Bestellnummer an /articles API-Aufruf zur Performance-Optimierung auf TYPO3-Seite
+
+            [TASK]      Adaption des Plugins an das Shopware 5.2 Plugin System
+                        (https://developers.shopware.com/developers-guide/plugin-system/)
+
+            [BUGFIX]    Fehlerbehung das Urls in API Antwort nicht die Konfiguration des Shops berücksichtigen
+                        (z.B.: secureHost, secure, baseUrl,...)
+        </changes>
+        <changes lang="en">
+            [FEATURE]   Adds NotificationService to send notification message to TYPO3 if article, product, shop or
+                        media model created, updated or deleted
+
+            [FEATURE]   Adds Order Number to API /article response to improve performance on TYPO3 site
+
+            [TASK]      Plugin Adaption to new Shopware 5.2 Plugin System
+                        (https://developers.shopware.com/developers-guide/plugin-system/)
+
+            [BUGFIX]    Fixes bug where the url`s to the articles and categories do not respect the shop settings
+                        from backend (e.g. secureHost, secure, baseUrl, ...)
+        </changes>
     </changelog>
+
+    <compatibility minVersion="5.2.0" />
 </plugin>
