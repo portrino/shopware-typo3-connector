@@ -5,11 +5,19 @@ use Port1Typo3Connector\Components\ApiArticlesOrderNumberDecorator;
 use Port1Typo3Connector\Components\ApiTokenDecorator;
 use Port1Typo3Connector\Components\ApiUrlDecorator\ApiArticlesUrlDecorator;
 use Port1Typo3Connector\Components\ApiUrlDecorator\ApiCategoriesUrlDecorator;
+use Port1Typo3Connector\Service\Notification\Command;
 use Port1Typo3Connector\Service\Notification\NotificationService;
+use Port1Typo3Connector\Service\Notification\Typo3NotificationService;
 use Shopware\Bundle\AttributeBundle\Service\TypeMapping;
 use Shopware\Bundle\PluginInstallerBundle\Service\PluginLicenceService;
+use Shopware\Bundle\StoreFrontBundle\Struct\Media;
+use Shopware\Components\Model\ModelEntity;
+use Shopware\Components\Model\ModelManager;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\InstallContext;
+use Shopware\Models\Article\Article;
+use Shopware\Models\Category\Category;
+use Shopware\Models\Shop\Shop;
 
 class Port1Typo3Connector extends Plugin
 {
@@ -51,12 +59,21 @@ class Port1Typo3Connector extends Plugin
             //            we don`t need to extendExtJS for now, because it is hard to place the attribute field within another form
             //            https://developers.shopware.com/developers-guide/attribute-system/#move-attribute-fields-into-anoth
             //            'Enlight_Controller_Action_PostDispatchSecure_Backend_UserManager' => 'extendExtJS'
-            'Shopware\Models\Article\Article::postPersist' => 'createArticle',
-            'Shopware\Models\Article\Article::postUpdate' => 'updateArticle',
-            'Shopware\Models\Article\Article::preRemove' => 'deleteArticle',
-            'Shopware\Models\Category\Category::postPersist' => 'createCategory',
-            'Shopware\Models\Category\Category::postUpdate' => 'updateCategory',
-            'Shopware\Models\Category\Category::preRemove' => 'deleteCategory'
+            \Shopware\Models\Article\Article::class . '::postPersist' => 'createEntity',
+            \Shopware\Models\Article\Article::class . '::postUpdate' => 'updateEntity',
+            \Shopware\Models\Article\Article::class . '::preRemove' => 'deleteEntity',
+
+            \Shopware\Models\Category\Category::class . '::postPersist' => 'createEntity',
+            \Shopware\Models\Category\Category::class . '::postUpdate' => 'updateEntity',
+            \Shopware\Models\Category\Category::class . '::preRemove' => 'deleteEntity',
+
+            \Shopware\Models\Media\Media::class . '::postPersist' => 'createEntity',
+            \Shopware\Models\Media\Media::class . '::postUpdate' => 'updateEntity',
+            \Shopware\Models\Media\Media::class . '::preRemove' => 'deleteEntity',
+
+            \Shopware\Models\Shop\Shop::class . '::postPersist' => 'createEntity',
+            \Shopware\Models\Shop\Shop::class . '::postUpdate' => 'updateEntity',
+            \Shopware\Models\Shop\Shop::class . '::preRemove' => 'deleteEntity'
         ];
 
         /**
@@ -87,65 +104,55 @@ class Port1Typo3Connector extends Plugin
     /**
      * @param \Enlight_Event_EventArgs $arguments
      */
-    public function createArticle(\Enlight_Event_EventArgs $arguments) {
-        $modelManager = $arguments->get('entityManager');
-        $model = $arguments->get('entity');
+    public function createEntity(\Enlight_Event_EventArgs $arguments) {
+        /** @var ModelEntity|Article|Category|Media|Shop $entity */
+        $entity = $arguments->get('entity');
+        $reflection = new \ReflectionClass(get_class($entity));
+        $type = strtolower($reflection->getShortName());
 
-        error_log('CREATE ARTICLE: ' . $model->getId() . "\n", 3, Shopware()->DocPath() . '/error.log');
+        /** @var Typo3NotificationService $notificationService */
+        $notificationService = $this->container->get('port1_typo3_connector.typo3_notification_service');
+        $notificationService->notify(
+            Command::COMMAND_CREATE,
+            $type,
+            $entity->getId()
+        );
     }
 
     /**
      * @param \Enlight_Event_EventArgs $arguments
      */
-    public function updateArticle(\Enlight_Event_EventArgs $arguments) {
-        $modelManager = $arguments->get('entityManager');
-        $model = $arguments->get('entity');
-        /** @var NotificationService $notificationService */
-        $notificationService = $this->container->get('port1_typo3_connector.notification_service');
-        $notificationService->notify('update', 'article', $model->getId());
-        /**
-         * @todo: Keine Benachrichtigung bei Bestandsänderung
-         */
+    public function updateEntity(\Enlight_Event_EventArgs $arguments) {
+        /** @var ModelEntity|Article|Category|Media|Shop $entity */
+        $entity = $arguments->get('entity');
+        $reflection = new \ReflectionClass(get_class($entity));
+        $type = strtolower($reflection->getShortName());
+
+        /** @var Typo3NotificationService $notificationService */
+        $notificationService = $this->container->get('port1_typo3_connector.typo3_notification_service');
+        $notificationService->notify(
+            Command::COMMAND_UPDATE,
+            $type,
+            $entity->getId()
+        );
     }
 
     /**
      * @param \Enlight_Event_EventArgs $arguments
      */
-    public function deleteArticle(\Enlight_Event_EventArgs $arguments) {
-        $modelManager = $arguments->get('entityManager');
-        $model = $arguments->get('entity');
+    public function deleteEntity(\Enlight_Event_EventArgs $arguments) {
+        /** @var ModelEntity|Article|Category|Media|Shop $entity */
+        $entity = $arguments->get('entity');
+        $reflection = new \ReflectionClass(get_class($entity));
+        $type = strtolower($reflection->getShortName());
 
-        error_log('DELETE ARTICLE: ' . $model->getId() . "\n", 3, Shopware()->DocPath() . '/error.log');
-    }
-
-    /**
-     * @param \Enlight_Event_EventArgs $arguments
-     */
-    public function createCategory(\Enlight_Event_EventArgs $arguments) {
-        $modelManager = $arguments->get('entityManager');
-        $model = $arguments->get('entity');
-
-        error_log('CREATE CATEGORY: ' . $model->getId() . "\n", 3, Shopware()->DocPath() . '/error.log');
-    }
-
-    /**
-     * @param \Enlight_Event_EventArgs $arguments
-     */
-    public function updateCategory(\Enlight_Event_EventArgs $arguments) {
-        $modelManager = $arguments->get('entityManager');
-        $model = $arguments->get('entity');
-
-        error_log('UPDATE CATEGORY: ' . $model->getId() . "\n", 3, Shopware()->DocPath() . '/error.log');
-    }
-
-    /**
-     * @param \Enlight_Event_EventArgs $arguments
-     */
-    public function deleteCategory(\Enlight_Event_EventArgs $arguments) {
-        $modelManager = $arguments->get('entityManager');
-        $model = $arguments->get('entity');
-
-        error_log('DELETE CATEGORY: ' . $model->getId() . "\n", 3, Shopware()->DocPath() . '/error.log');
+        /** @var Typo3NotificationService $notificationService */
+        $notificationService = $this->container->get('port1_typo3_connector.typo3_notification_service');
+        $notificationService->notify(
+            Command::COMMAND_DELETE,
+            $type,
+            $entity->getId()
+        );
     }
 
     /**
@@ -192,7 +199,7 @@ class Port1Typo3Connector extends Plugin
         $service = $this->container->get('shopware_attribute.crud_service');
 
         $service->update('s_core_auth_attributes', 'typo3_api_url', TypeMapping::TYPE_STRING, [
-            'label' => 'TYPO3 API-Key',
+            'label' => 'TYPO3 API-URLhttp://typo3.local.192.168.1.246.nip.io/?type=1471426941',
             'supportText' => 'Enter the TYPO3 API-URL here to push notifications about changes of articles / categories to this endpoint.',
             'helpText' => 'Enter the TYPO3 API-URL here',
 

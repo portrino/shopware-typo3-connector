@@ -1,0 +1,80 @@
+<?php
+
+namespace Port1Typo3Connector\Service\Notification;
+
+    /**
+     * Copyright (C) portrino GmbH - All Rights Reserved
+     * Unauthorized copying of this file, via any medium is strictly prohibited
+     * Proprietary and confidential
+     * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
+     */
+
+use Shopware\Models\User\User;
+
+/**
+ * Class NotificationService
+ *
+ * @package Port1Typo3Connector\Service\Notification
+ */
+class Typo3NotificationService extends NotificationService
+{
+
+    /**
+     * @var \Zend_Http_Client
+     */
+    protected $client = null;
+
+    /**
+     * intialize the service (http client)
+     */
+    protected function initialize()
+    {
+        parent::initialize();
+
+        if ($this->isApiConfigured()) {
+            $uri = \Zend_Uri_Http::fromString($this->consumerApiUrl);
+            $this->client = new \Zend_Http_Client($uri);
+            $header = 'SW-TOKEN apikey="' . (string)$this->apiKey . '"';
+            $this->client->setHeaders('Authorization', $header);
+        }
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getConsumerApiUrl() {
+        $result = '';
+        if ($this->user && $this->user instanceof User) {
+            $result = $this->user->getAttribute()->getTypo3ApiUrl();
+        }
+        return $result;
+    }
+
+    /**
+     * checks if the http client is initialized
+     */
+    protected function isHttpClientInitialized() {
+        return ($this->client != null && $this->client->getUri() != '' && $this->client->getHeader('Authorization') != '');
+    }
+
+    /**
+     * @param Command $command
+     *
+     * @return mixed
+     */
+    protected function sendNotification(Command $command) {
+        if ($this->isHttpClientInitialized()) {
+            $this->client->setRawData(json_encode(
+                    [
+                        'data' =>
+                            [
+                                $command
+                            ]
+                    ])
+            );
+            $this->client->request(\Zend_Http_Client::POST);
+        }
+    }
+
+}

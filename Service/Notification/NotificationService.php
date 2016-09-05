@@ -8,42 +8,74 @@ namespace Port1Typo3Connector\Service\Notification;
      * Proprietary and confidential
      * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
      */
+use Shopware\Models\User\User;
 
 /**
  * Class NotificationService
  *
  * @package Port1Typo3Connector\Service\Notification
  */
-class NotificationService
+abstract class NotificationService implements NotificationServiceInterface
 {
+
     /**
      * @var \Shopware\Models\User\Repository
      */
     protected $userRepository = null;
 
     /**
+     * @var \Shopware\Models\User\User
+     */
+    protected $user = null;
+
+    /**
      * @var string
      */
-    protected $typo3ApiUrl = '';
+    protected $consumerApiUrl = false;
+
+    /**
+     * @var string
+     */
+    protected $apiKey = false;
 
     /**
      * NotificationService constructor.
      */
     public function __construct()
     {
-        $id = Shopware()->Container()->get('auth')->getIdentity()->id;
-
-        /** @var array|null $data */
-        $data = $this->getUserRepository()
-                     ->getAttributesQuery($id)
-                     ->getOneOrNullResult(\Doctrine\ORM\AbstractQuery::HYDRATE_ARRAY);
-
-        $this->typo3ApiUrl = trim($data['typo3ApiUrl']);
+        $this->initialize();
     }
 
+    /**
+     * initialize the service
+     */
+    protected function initialize() {
+        $id = Shopware()->Container()->get('auth')->getIdentity()->id;
+        $this->user = $this->getUserRepository()->getUserDetailQuery($id)->getOneOrNullResult();
+
+        $this->apiKey = $this->getApiKey() != '' ? $this->getApiKey() : false;
+        $this->consumerApiUrl = $this->getConsumerApiUrl() != '' ? $this->getConsumerApiUrl() : false;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getApiKey() {
+        $result = '';
+        if ($this->user && $this->user instanceof User) {
+            $result = $this->user->getApiKey();
+        }
+        return $result;
+    }
+
+    /**
+     * @return string
+     */
+    abstract protected function getConsumerApiUrl();
 
     /**
      * Helper function to get access to the user repository.
+     *
      * @return \Shopware\Models\User\Repository
      */
     private function getUserRepository()
@@ -55,15 +87,37 @@ class NotificationService
     }
 
     /**
-     * sends the notification to TYPO3
+     * checks if the API key and the consumer API url is set
+     */
+    protected function isApiConfigured() {
+        return ($this->apiKey != false && $this->consumerApiUrl != false);
+    }
+
+    /**
+     * sends the notification to the consumer system
      *
-     * @param $action
-     * @param $type
-     * @param $id
+     * @param string $action
+     * @param string $type
+     * @param int $id
      */
     public function notify($action, $type, $id)
     {
+        if ($this->isApiConfigured()) {
+            $command = new Command($action, $type, $id);
 
+
+            /**
+             * @todo: Keine Benachrichtigung bei Bestandsänderung
+             */
+
+            $this->sendNotification($command);
+        }
     }
 
+    /**
+     * @param Command $command
+     *
+     * @return mixed
+     */
+    abstract protected function sendNotification(Command $command);
 }
