@@ -12,6 +12,7 @@ namespace Port1Typo3Connector\Components;
 use Shopware\Components\Api\Manager;
 use Shopware\Components\Api\Resource\Shop;
 use Shopware\Components\Routing\Context;
+use Shopware\Components\Routing\Router;
 use Shopware\Models\Shop\DetachedShop;
 
 /**
@@ -75,16 +76,16 @@ abstract class ApiUrlDecorator
             if ($language != false) {
 //                we could not use this query, because of bug described here: https://issues.shopware.com/#/issues/SW-15388
 //                $this->shop = $this->shopResource->getRepository()->queryBy(array('active' => TRUE, 'locale' => $language))->getOneOrNullResult();
-                $this->shop = $this->shopResource->getRepository()->queryBy(array(
+                $this->shop = $this->shopResource->getRepository()->queryBy([
                     'active' => true,
                     'id' => $language
-                ))->getOneOrNullResult();
+                ])->getOneOrNullResult();
             } else {
                 $this->shop = $this->shopResource->getRepository()->getActiveDefault();
             }
             $router = $this->controller->Front()->Router();
 
-            if ($router instanceof \Shopware\Components\Routing\Router) {
+            if ($router instanceof Router) {
                 $router->getContext()->setHost($this->shop->getHost());
                 $router->getContext()->setBaseUrl($this->shop->getBaseUrl());
                 $router->getContext()->setShopId($this->shop->getId());
@@ -112,7 +113,7 @@ abstract class ApiUrlDecorator
                     if (is_array($data) && isset($data['id'])) {
                         $url = $this->getItemUrl($data['id']);
                         $data = array_merge_recursive($this->controller->View()->getAssign('data'),
-                            array('pxShopwareUrl' => $url));
+                            ['pxShopwareUrl' => $url]);
                     }
                 }
 

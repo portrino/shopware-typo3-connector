@@ -8,6 +8,7 @@ namespace Port1Typo3Connector\Components;
  * Proprietary and confidential
  * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
  */
+use Shopware\Components\Api\Manager;
 use Shopware\Components\Model\QueryBuilder;
 
 /**
@@ -50,7 +51,7 @@ class ApiArticlesOrderNumberDecorator
         $this->isPxShopwareRequest = ($this->request->getParam('px_shopware') != null) ? (bool)$this->request->getParam('px_shopware') : false;
 
         if ($this->isPxShopwareRequest) {
-            $this->resource = \Shopware\Components\Api\Manager::getResource('article');
+            $this->resource = Manager::getResource('article');
         }
     }
 
@@ -72,7 +73,7 @@ class ApiArticlesOrderNumberDecorator
                             $orderNumber = $this->getOrderNumber($data);
                         }
                         $data = array_merge_recursive($this->controller->View()->getAssign('data'),
-                            array('pxShopwareOrderNumber' => $orderNumber));
+                            ['pxShopwareOrderNumber' => $orderNumber]);
                     }
                 }
 
@@ -118,7 +119,7 @@ class ApiArticlesOrderNumberDecorator
             /** @var \Doctrine\ORM\QueryBuilder|QueryBuilder $builder */
             $builder = $this->resource->getManager()->createQueryBuilder();
 
-            $builder->select(array('details'))
+            $builder->select(['details'])
                     ->from('Shopware\Models\Article\Detail', 'details')
                     ->where('details.id = :mainDetailId')
                     ->setParameter('mainDetailId', $article['mainDetailId']);

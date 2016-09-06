@@ -25,12 +25,12 @@ class ApiArticlesUrlDecorator extends ApiUrlDecorator
      */
     protected function getItemUrl($itemId)
     {
-        $arr = array(
+        $arr = [
             'sViewport' => 'detail',
             'sArticle' => $itemId,
             'module' => 'frontend',
             'forceSecure' => true
-        );
+        ];
 
         return $this->controller->Front()->Router()->assemble($arr);
     }

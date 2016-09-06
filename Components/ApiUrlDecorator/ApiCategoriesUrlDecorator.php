@@ -23,11 +23,11 @@ class ApiCategoriesUrlDecorator extends ApiUrlDecorator
      */
     protected function getItemUrl($itemId)
 {
-    $arr = array(
+    $arr = [
         'sViewport' => 'cat',
         'sCategory' => $itemId,
         'module' => 'frontend',
-    );
+    ];
     return $this->controller->Front()->Router()->assemble($arr);
 }
 

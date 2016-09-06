@@ -2,13 +2,14 @@
 
 namespace Port1Typo3Connector\Service\Notification;
 
-    /**
-     * Copyright (C) portrino GmbH - All Rights Reserved
-     * Unauthorized copying of this file, via any medium is strictly prohibited
-     * Proprietary and confidential
-     * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
-     */
+/**
+ * Copyright (C) portrino GmbH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
+ */
 
+use Shopware\Components\Model\ModelManager;
 use Shopware\Models\User\User;
 
 /**
@@ -23,6 +24,11 @@ class Typo3NotificationService extends NotificationService
      * @var \Zend_Http_Client
      */
     protected $client = null;
+
+    public function __construct(ModelManager $entityManager)
+    {
+        parent::__construct($entityManager);
+    }
 
     /**
      * intialize the service (http client)
