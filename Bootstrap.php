@@ -51,7 +51,7 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
      */
     public function getVersion()
     {
-        return '2.0.0';
+        return '1.1.0';
     }
 
     /**
