@@ -96,6 +96,8 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
          */
         $this->checkLicense();
 
+        $this->addTypo3ApiUrlAttribute();
+
         foreach (self::getSubscribedEvents() as $eventName => $params) {
             if (is_string($params)) {
                 $this->subscribeEvent($eventName, $params);
@@ -266,6 +268,21 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
     {
         $apiOrderNumberDecorator = new ApiArticlesOrderNumberDecorator($args->get('subject'));
         return $apiOrderNumberDecorator->addOrderNumber();
+    }
+
+    /**
+     * add TYPO3 API-URL attribute to s_core_auth_attributes
+     */
+    protected function addTypo3ApiUrlAttribute()
+    {
+
+        Shopware()->Models()->addAttribute('s_core_auth_attributes', 'typo3', 'api_url', 'varchar(500)', false, 0);
+
+        Shopware()->Models()->generateAttributeModels(
+            array('s_core_auth_attributes')
+        );
+
+        return true;
     }
 
     /**
