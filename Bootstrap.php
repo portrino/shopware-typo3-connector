@@ -96,8 +96,6 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
          */
         $this->checkLicense();
 
-        $this->addTypo3ApiUrlAttribute();
-
         foreach (self::getSubscribedEvents() as $eventName => $params) {
             if (is_string($params)) {
                 $this->subscribeEvent($eventName, $params);
@@ -268,36 +266,6 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
     {
         $apiOrderNumberDecorator = new ApiArticlesOrderNumberDecorator($args->get('subject'));
         return $apiOrderNumberDecorator->addOrderNumber();
-    }
-
-    /**
-     * add TYPO3 API-URL attribute to s_core_auth_attributes
-     */
-    protected function addTypo3ApiUrlAttribute()
-    {
-        /** @var \Shopware\Bundle\AttributeBundle\Service\CrudService $service */
-        $service = Shopware()->Container()->get('shopware_attribute.crud_service');
-
-        $service->update('s_core_auth_attributes', 'typo3_api_url', \Shopware\Bundle\AttributeBundle\Service\TypeMapping::TYPE_STRING, [
-            'label' => 'TYPO3 API-URL',
-            'supportText' => 'Enter the TYPO3 API-URL here to push notifications about changes of articles / categories to this endpoint.',
-            'helpText' => 'Enter the TYPO3 API-URL here',
-
-            //user has the opportunity to translate the attribute field for each shop
-            'translatable' => true,
-
-            //attribute will be displayed in the backend module
-            'displayInBackend' => true,
-
-            //numeric position for the backend view, sorted ascending
-            'position' => 100,
-
-            //user can modify the attribute in the free text field module
-            'custom' => false,
-
-        ]);
-
-        return true;
     }
 
     /**
