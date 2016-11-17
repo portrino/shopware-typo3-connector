@@ -120,22 +120,22 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
             //            we don`t need to extendExtJS for now, because it is hard to place the attribute field within another form
             //            https://developers.shopware.com/developers-guide/attribute-system/#move-attribute-fields-into-anoth
             //            'Enlight_Controller_Action_PostDispatchSecure_Backend_UserManager' => 'extendExtJS'
-            \Shopware\Models\Article\Article::class . '::postPersist' => 'createEntity',
-            \Shopware\Models\Article\Article::class . '::postUpdate' => 'updateEntity',
-            \Shopware\Models\Article\Article::class . '::preRemove' => 'deleteEntity',
+            'Shopware\Models\Article\Article::postPersist' => 'createEntity',
+            'Shopware\Models\Article\Article::postUpdate' => 'updateEntity',
+            'Shopware\Models\Article\Article::preRemove' => 'deleteEntity',
 
-            \Shopware\Models\Category\Category::class . '::postPersist' => 'createEntity',
-            \Shopware\Models\Category\Category::class . '::preUpdate ' => 'preUpdateEntity',
-            \Shopware\Models\Category\Category::class . '::postUpdate' => 'updateEntity',
-            \Shopware\Models\Category\Category::class . '::preRemove' => 'deleteEntity',
+            'Shopware\Models\Category\Category::postPersist' => 'createEntity',
+            'Shopware\Models\Category\Category::preUpdate ' => 'preUpdateEntity',
+            'Shopware\Models\Category\Category::postUpdate' => 'updateEntity',
+            'Shopware\Models\Category\Category::preRemove' => 'deleteEntity',
 
-            \Shopware\Models\Media\Media::class . '::postPersist' => 'createEntity',
-            \Shopware\Models\Media\Media::class . '::postUpdate' => 'updateEntity',
-            \Shopware\Models\Media\Media::class . '::preRemove' => 'deleteEntity',
+            'Shopware\Models\Media\Media::postPersist' => 'createEntity',
+            'Shopware\Models\Media\Media::postUpdate' => 'updateEntity',
+            'Shopware\Models\Media\Media::preRemove' => 'deleteEntity',
 
-            \Shopware\Models\Shop\Shop::class . '::postPersist' => 'createEntity',
-            \Shopware\Models\Shop\Shop::class . '::postUpdate' => 'updateEntity',
-            \Shopware\Models\Shop\Shop::class . '::preRemove' => 'deleteEntity'
+            'Shopware\Models\Shop\Shop::postPersist' => 'createEntity',
+            'Shopware\Models\Shop\Shop::postUpdate' => 'updateEntity',
+            'Shopware\Models\Shop\Shop::preRemove' => 'deleteEntity'
         ];
 
         /**
