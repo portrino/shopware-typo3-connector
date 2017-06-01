@@ -74,7 +74,7 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
         return [
             'version' => $this->getVersion(),
             'autor' => 'portrino GmbH',
-            'copyright' => '© 2016 ',
+            'copyright' => '© 2017 ',
             'label' => $this->getLabel(),
             'source' => 'Community',
             'description' => 'Enables communication with TYPO3-Extension "PxShopware".',
@@ -169,10 +169,6 @@ class Shopware_Plugins_Frontend_Port1Typo3Connector_Bootstrap extends Shopware_C
     public function afterInit()
     {
         parent::afterInit();
-
-
-
-//        Shopware()->Container()->set('port1_typo3_connector.typo3_notification_service', $notificationService);
 
         $this->Application()->Loader()->registerNamespace('Port1Typo3Connector', $this->Path());
     }

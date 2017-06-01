@@ -52,7 +52,10 @@ class Typo3NotificationService extends NotificationService
     protected function getConsumerApiUrl() {
         $result = '';
         if ($this->user && $this->user instanceof User) {
-            $result = $this->user->getAttribute()->getTypo3ApiUrl();
+            $attribute = $this->user->getAttribute();
+            if ($attribute != null) {
+                $result = $this->user->getAttribute()->getTypo3ApiUrl();
+            }
         }
         return $result;
     }

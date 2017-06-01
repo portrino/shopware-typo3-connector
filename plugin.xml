@@ -3,9 +3,9 @@
     <label lang="de">TYPO3-Connector</label>
     <label lang="en">TYPO3-Connector</label>
 
-    <version>2.0.0</version>
+    <version>2.0.1</version>
 
-    <copyright>© 2016</copyright>
+    <copyright>© 2017</copyright>
 
     <license></license>
 
@@ -15,6 +15,17 @@
 
     <description lang="de">Ermöglicht die Kommunikation mit der TYPO3-Erweiterung "PxShopware"</description>
     <description lang="en">Enables communication with TYPO3-Extension "PxShopware".</description>
+
+    <changelog version="2.0.1">
+        <changes lang="de">
+            [BUGFIX]    Behebt einen Fehler welcher nach dem Speichern eines Artikels auftritt, wenn für den aktuellen
+            Backend Benutzer keine TYPO3 API-URL hinterlegt ist.
+        </changes>
+        <changes lang="en">
+            [BUGFIX]    Fixes a bug which leads to an exception after create / update / delete article in backend when
+            there is no TYPO3 API-URL configured for the current backend user.
+        </changes>
+    </changelog>
 
     <changelog version="2.0.0">
         <changes lang="de">
