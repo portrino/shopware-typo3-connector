@@ -1,0 +1,26 @@
+{
+    "name": "portrino/shopware-typo3connector",
+    "description": "Enables communication with TYPO3-Extension PxShopware.",
+    "license": "proprietary",
+    "type": "shopware-plugin",
+    "authors": [
+        {
+            "name": "Andre Wuttig",
+            "email": "wuttig@portrino.de",
+            "homepage": "http://www.portrino.de",
+            "role": "Developer"
+        },
+        {
+            "name": "Axel Boeswetter",
+            "email": "boeswetter@portrino.de",
+            "homepage": "http://www.portrino.de",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "extra": {
+        "installer-name": "Port1Typo3Connector"
+    }
+}
