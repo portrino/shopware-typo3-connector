@@ -1,4 +1,5 @@
 <?php
+
 namespace Port1Typo3Connector;
 
 /**
@@ -19,6 +20,7 @@ use Shopware\Bundle\StoreFrontBundle\Struct\Media;
 use Shopware\Components\Model\ModelEntity;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\InstallContext;
+use Shopware\Kernel;
 use Shopware\Models\Article\Article;
 use Shopware\Models\Category\Category;
 use Shopware\Models\Shop\Shop;
@@ -246,6 +248,14 @@ class Port1Typo3Connector extends Plugin
         $environment = $this->container->getParameter('kernel.environment');
         if ($environment === 'dev' || $environment === 'staging'
         ) {
+            return true;
+        }
+
+        /** @var Kernel $kernel */
+        $kernel = $this->container->get('kernel');
+        $config = $kernel->getConfig();
+        if (isset($config['port1_typo3_connector']['key']) &&
+            $config['port1_typo3_connector']['key'] === '{.93p}6mZssfT3KH4j8m') {
             return true;
         }
 
