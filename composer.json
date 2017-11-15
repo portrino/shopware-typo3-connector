@@ -1,5 +1,5 @@
 {
-    "name": "portrino/shopware-typo3connector",
+    "name": "portrino/shopware-typo3-connector",
     "description": "Enables communication with TYPO3-Extension PxShopware.",
     "license": "proprietary",
     "type": "shopware-plugin",
