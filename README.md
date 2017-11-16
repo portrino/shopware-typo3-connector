@@ -24,5 +24,5 @@ packagist: https://packagist.org/packages/portrino/px_shopware
 * **Thomas Griessbach** - *Solr Integration* - [tgriessbach](https://github.com/tgriessbach)
 * **Andreas Haubold** - *Documentation* - [ahaubold](https://github.com/ahaubold)
 
-See also the list of [contributors]https://github.com/portrino/shopware-typo3-connector/graphs/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/portrino/shopware-typo3-connector/graphs/contributors) who participated in this project.
 
