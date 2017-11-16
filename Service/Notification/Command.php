@@ -2,13 +2,6 @@
 
 namespace Port1Typo3Connector\Service\Notification;
 
-/**
- * Copyright (C) portrino GmbH - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
- */
-
 use Shopware\Models\Article\Article;
 use Shopware\Models\Category\Category;
 use Shopware\Models\Media\Media;

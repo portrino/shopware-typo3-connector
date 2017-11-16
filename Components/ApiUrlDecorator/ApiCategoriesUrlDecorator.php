@@ -2,12 +2,6 @@
 
 namespace Port1Typo3Connector\Components\ApiUrlDecorator;
 
-    /**
-     * Copyright (C) portrino GmbH - All Rights Reserved
-     * Unauthorized copying of this file, via any medium is strictly prohibited
-     * Proprietary and confidential
-     * Written by André Wuttig <wuttig@portrino.de>, portrino GmbH
-     */
 use Port1Typo3Connector\Components\ApiUrlDecorator;
 
 /**

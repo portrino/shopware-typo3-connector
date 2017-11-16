@@ -1,18 +1,24 @@
 {
     "name": "portrino/shopware-typo3-connector",
     "description": "Enables communication with TYPO3-Extension PxShopware.",
-    "license": "proprietary",
+    "license": "MIT",
     "type": "shopware-plugin",
     "authors": [
         {
             "name": "Andre Wuttig",
-            "email": "wuttig@portrino.de",
+            "email": "andr.wuttig@gmail.com",
+            "homepage": "https://github.com/aWuttig",
+            "role": "Developer"
+        },
+        {
+            "name": "Thomas Griessbach",
+            "email": "griesbach@portrino.de",
             "homepage": "http://www.portrino.de",
             "role": "Developer"
         },
         {
-            "name": "Axel Boeswetter",
-            "email": "boeswetter@portrino.de",
+            "name": "Andreas Haubold",
+            "email": "haubold@portrino.de",
             "homepage": "http://www.portrino.de",
             "role": "Developer"
         }

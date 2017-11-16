@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: aw
- * Date: 05.09.2016
- * Time: 08:57
- */
-namespace Port1Typo3Connector\Service\Notification;
 
+namespace Port1Typo3Connector\Service\Notification;
 
 /**
  * Interface NotificationServiceInterface

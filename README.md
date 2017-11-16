@@ -14,3 +14,15 @@ The Shopware plugin can be installed within the plugin manager or via composer.
 Additionally you need to install and configure the extension "px_shopware" within TYPO3. 
 It can be imported from TER (TYPO3 Extension Repository): https://typo3.org/extensions/repository/view/px_shopware or better you get it from 
 packagist: https://packagist.org/packages/portrino/px_shopware
+
+## Authors
+
+![](https://avatars0.githubusercontent.com/u/726519?s=40&v=4)
+![](https://avatars3.githubusercontent.com/u/11868665?s=40&v=4)
+
+* **André Wuttig** - *Initial work* - [aWuttig](https://github.com/aWuttig)
+* **Thomas Griessbach** - *Solr Integration* - [tgriessbach](https://github.com/tgriessbach)
+* **Andreas Haubold** - *Documentation* - [ahaubold](https://github.com/ahaubold)
+
+See also the list of [contributors]https://github.com/portrino/shopware-typo3-connector/graphs/contributors) who participated in this project.
+
