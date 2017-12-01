@@ -1,4 +1,6 @@
 # Shopware TYPO3-Connector
+[![Latest Stable Version](https://poser.pugx.org/portrino/shopware-typo3-connector/v/stable)](https://packagist.org/packages/portrino/shopware-typo3-connector)
+[![Total Downloads](https://poser.pugx.org/portrino/shopware-typo3-connector/downloads)](https://packagist.org/packages/portrino/shopware-typo3-connector)
 
 ## Description
 
