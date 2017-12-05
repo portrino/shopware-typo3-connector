@@ -50,10 +50,7 @@ class Port1Typo3Connector extends Plugin
      */
     public function install(InstallContext $context)
     {
-        $this->checkLicense();
-
         $this->addTypo3ApiUrlAttribute();
-
     }
 
 
@@ -229,61 +226,5 @@ class Port1Typo3Connector extends Plugin
         $view = $arguments->getSubject()->View();
         $view->addTemplateDir($this->getPath() . '/Views/');
         $view->extendsTemplate('backend/port1_typo3_connector/view/user/create.js');
-    }
-
-    /**
-     * checkLicense()-method for Port1Typo3Connector
-     */
-    public function checkLicense($throwException = true)
-    {
-        /** @var \Shopware $application */
-        $application = $this->container->get('application');
-
-        $environment = $this->container->getParameter('kernel.environment');
-        if ($environment === 'dev' || $environment === 'staging'
-        ) {
-            return true;
-        }
-
-        /** @var Kernel $kernel */
-        $kernel = $this->container->get('kernel');
-        $config = $kernel->getConfig();
-        if (isset($config['port1_typo3_connector']['key']) &&
-            $config['port1_typo3_connector']['key'] === '{.93p}6mZssfT3KH4j8m') {
-            return true;
-        }
-
-        if (!$application->Container()->has('license')) {
-            if ($throwException) {
-                throw new \Exception('The license manager has to be installed and active');
-            } else {
-                return false;
-            }
-        }
-
-        try {
-            static $r, $module = 'Port1Typo3Connector';
-            if (!isset($r)) {
-                $s = base64_decode('zkFJGvtiUOjC2mLx2oGm+nXWV38=');
-                $c = base64_decode('j1/FmuiYqRPoptzEjxSF7CZ6HjY=');
-                $r = sha1(uniqid('', true), true);
-                /** @var $l \Shopware_Components_Licence */
-                $l = $application->License();
-                $i = $l->getLicense($module, $r);
-                $t = $l->getCoreLicense();
-                $u = strlen($t) === 20 ? sha1($t . $s . $t, true) : 0;
-                $r = $i === sha1($c . $u . $r, true);
-            }
-            if (!$r && $throwException) {
-                throw new \Exception('License check for module "' . $module . '" has failed.');
-            }
-            return $r;
-        } catch (\Exception $e) {
-            if ($throwException) {
-                throw new \Exception('License check for module "' . $module . '" has failed.');
-            } else {
-                return false;
-            }
-        }
     }
 }
