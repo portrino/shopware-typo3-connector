@@ -79,13 +79,21 @@ abstract class ApiUrlDecorator
             $router = $this->controller->Front()->Router();
 
             if ($router instanceof Router) {
+                /** @var \Shopware\Components\ShopwareReleaseStruct $shopwareRelease */
+                $shopwareRelease = \Shopware()->Container()->get('shopware.release');
+                $currentVersion = $shopwareRelease->getVersion();
+
                 $router->getContext()->setHost($this->shop->getHost());
                 $router->getContext()->setBaseUrl($this->shop->getBaseUrl());
                 $router->getContext()->setShopId($this->shop->getId());
                 $router->getContext()->setSecure($this->shop->getSecure());
-                $router->getContext()->setAlwaysSecure($this->shop->getAlwaysSecure());
-                $router->getContext()->setSecureHost($this->shop->getSecureHost());
-                $router->getContext()->setSecureBaseUrl($this->shop->getSecureBaseUrl());
+
+                if (version_compare($currentVersion, '5.4') < 0 ) {
+                    // the following methods are removed in Shopware 5.4
+                    $router->getContext()->setAlwaysSecure($this->shop->getAlwaysSecure());
+                    $router->getContext()->setSecureHost($this->shop->getSecureHost());
+                    $router->getContext()->setSecureBaseUrl($this->shop->getSecureBaseUrl());
+                }
             }
         }
     }
