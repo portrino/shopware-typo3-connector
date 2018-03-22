@@ -79,9 +79,15 @@ abstract class ApiUrlDecorator
             $router = $this->controller->Front()->Router();
 
             if ($router instanceof Router) {
-                /** @var \Shopware\Components\ShopwareReleaseStruct $shopwareRelease */
-                $shopwareRelease = \Shopware()->Container()->get('shopware.release');
-                $currentVersion = $shopwareRelease->getVersion();
+                if (\Shopware::VERSION != '___VERSION___') {
+                    $currentVersion = \Shopware::VERSION;
+                } else {
+                    // if '___VERSION___' is given, it seems to be a composer installation
+                    // composer is available from 5.4 on and there we have the container 'shopware.release'
+                    /** @var \Shopware\Components\ShopwareReleaseStruct $shopwareRelease */
+                    $shopwareRelease = \Shopware()->Container()->get('shopware.release');
+                    $currentVersion = $shopwareRelease->getVersion();
+                }
 
                 $router->getContext()->setHost($this->shop->getHost());
                 $router->getContext()->setBaseUrl($this->shop->getBaseUrl());
