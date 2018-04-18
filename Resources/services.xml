@@ -4,7 +4,15 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <!--
+            Components / Resources
+        -->
+        <service id="shopware.api.article" class="Port1Typo3Connector\Components\Api\Resource\Article" >
+        </service>
 
+        <!--
+            Services
+        -->
         <service id="port1_typo3_connector.typo3_notification_service" class="Port1Typo3Connector\Service\Notification\Typo3NotificationService">
             <argument type="service" id="models" />
         </service>
