@@ -1,7 +1,5 @@
 <?php
-
 namespace Port1Typo3Connector;
-
 
 use Port1Typo3Connector\Components\ApiArticlesOrderNumberDecorator;
 use Port1Typo3Connector\Components\ApiTokenDecorator;
@@ -157,25 +155,27 @@ class Port1Typo3Connector extends Plugin
     public function onInitApiAddToken(\Enlight_Event_EventArgs $args)
     {
         $apiTokenDecorator = new ApiTokenDecorator($args->get('subject'));
-        return $apiTokenDecorator->addApiToken();
+        $apiTokenDecorator->addApiToken();
     }
 
     /**
      * @param \Enlight_Event_EventArgs $args
+     * @throws \Exception
      */
     public function onApiArticlesAddUrl(\Enlight_Event_EventArgs $args)
     {
-        $apiUrlDecorator = new ApiArticlesUrlDecorator($args->get('subject'));
-        return $apiUrlDecorator->addUrl();
+        $apiUrlDecorator = new ApiArticlesUrlDecorator($args->get('subject'), $this->container);
+        $apiUrlDecorator->addUrl();
     }
 
     /**
      * @param \Enlight_Event_EventArgs $args
+     * @throws \Exception
      */
     public function onApiCategoriesAddUrl(\Enlight_Event_EventArgs $args)
     {
-        $apiUrlDecorator = new ApiCategoriesUrlDecorator($args->get('subject'));
-        return $apiUrlDecorator->addUrl();
+        $apiUrlDecorator = new ApiCategoriesUrlDecorator($args->get('subject'), $this->container);
+        $apiUrlDecorator->addUrl();
     }
 
     /**
@@ -184,11 +184,12 @@ class Port1Typo3Connector extends Plugin
     public function onApiArticlesAddOrderNumber(\Enlight_Event_EventArgs $args)
     {
         $apiOrderNumberDecorator = new ApiArticlesOrderNumberDecorator($args->get('subject'));
-        return $apiOrderNumberDecorator->addOrderNumber();
+        $apiOrderNumberDecorator->addOrderNumber();
     }
 
     /**
      * add TYPO3 API-URL attribute to s_core_auth_attributes
+     * @throws \Exception
      */
     protected function addTypo3ApiUrlAttribute()
     {
@@ -219,11 +220,12 @@ class Port1Typo3Connector extends Plugin
 
     /**
      * @param \Enlight_Event_EventArgs $arguments
+     * @throws \Exception
      */
     public function extendExtJS(\Enlight_Event_EventArgs $arguments)
     {
         /** @var \Enlight_View_Default $view */
-        $view = $arguments->getSubject()->View();
+        $view = $arguments->get('subject')->View();
         $view->addTemplateDir($this->getPath() . '/Views/');
         $view->extendsTemplate('backend/port1_typo3_connector/view/user/create.js');
     }

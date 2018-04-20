@@ -1,9 +1,9 @@
 <?php
-
 namespace Port1Typo3Connector\Components;
 
 use Shopware\Components\Api\Manager;
 use Shopware\Components\Api\Resource\Shop;
+use Shopware\Components\DependencyInjection\Container;
 use Shopware\Components\Routing\Context;
 use Shopware\Components\Routing\Router;
 use Shopware\Models\Shop\DetachedShop;
@@ -17,34 +17,44 @@ abstract class ApiUrlDecorator
 {
 
     /**
+     * @var \Shopware_Components_Config
+     */
+    protected $config;
+
+    /**
+     * @var Container
+     */
+    protected $container;
+
+    /**
      * @var \Shopware_Controllers_Api_Articles
      */
-    protected $controller = null;
+    protected $controller;
 
     /**
      * @var \Enlight_Controller_Request_Request
      */
-    protected $request = null;
+    protected $request;
 
     /**
      * @var \Enlight_View_Default
      */
-    protected $view = null;
+    protected $view;
 
     /**
      * @var Shop
      */
-    protected $shopResource = null;
+    protected $shopResource;
 
     /**
      * @var DetachedShop
      */
-    protected $shop = null;
+    protected $shop;
 
     /**
      * @var Context
      */
-    protected $context = null;
+    protected $context;
 
     /**
      * @var bool
@@ -55,10 +65,15 @@ abstract class ApiUrlDecorator
      * ApiTokenDecorator constructor.
      *
      * @param \Enlight_Controller_Action $controller
+     * @param Container $container
+     * @throws \Exception
      */
-    public function __construct(\Enlight_Controller_Action $controller)
+    public function __construct(\Enlight_Controller_Action $controller, Container $container)
     {
+        $this->container = $container;
         $this->controller = $controller;
+
+        $this->config = $this->container->get('config');
         $this->request = $this->controller->Request();
         $this->view = $this->controller->View();
         $this->shopResource = Manager::getResource('shop');
@@ -66,9 +81,9 @@ abstract class ApiUrlDecorator
 
         if ($this->isPxShopwareRequest) {
             $language = ($this->request->getParam('language') != null) ? (int)$this->request->getParam('language') : false;
-            if ($language != false) {
-//                we could not use this query, because of bug described here: https://issues.shopware.com/#/issues/SW-15388
-//                $this->shop = $this->shopResource->getRepository()->queryBy(array('active' => TRUE, 'locale' => $language))->getOneOrNullResult();
+            if ($language !== false) {
+                // we cannot use this query, because of bug described here: https://issues.shopware.com/#/issues/SW-15388
+                // $this->shop = $this->shopResource->getRepository()->queryBy(array('active' => TRUE, 'locale' => $language))->getOneOrNullResult();
                 $this->shop = $this->shopResource->getRepository()->queryBy([
                     'active' => true,
                     'id' => $language
@@ -79,27 +94,38 @@ abstract class ApiUrlDecorator
             $router = $this->controller->Front()->Router();
 
             if ($router instanceof Router) {
-                if (\Shopware::VERSION != '___VERSION___') {
+                if (\Shopware::VERSION !== '___VERSION___') {
                     $currentVersion = \Shopware::VERSION;
                 } else {
                     // if '___VERSION___' is given, it seems to be a composer installation
                     // composer is available from 5.4 on and there we have the container 'shopware.release'
                     /** @var \Shopware\Components\ShopwareReleaseStruct $shopwareRelease */
-                    $shopwareRelease = \Shopware()->Container()->get('shopware.release');
+                    $shopwareRelease = $this->container->get('shopware.release');
                     $currentVersion = $shopwareRelease->getVersion();
                 }
 
-                $router->getContext()->setHost($this->shop->getHost());
-                $router->getContext()->setBaseUrl($this->shop->getBaseUrl());
-                $router->getContext()->setShopId($this->shop->getId());
-                $router->getContext()->setSecure($this->shop->getSecure());
-
-                if (version_compare($currentVersion, '5.4') < 0 ) {
-                    // the following methods are removed in Shopware 5.4
-                    $router->getContext()->setAlwaysSecure($this->shop->getAlwaysSecure());
-                    $router->getContext()->setSecureHost($this->shop->getSecureHost());
-                    $router->getContext()->setSecureBaseUrl($this->shop->getSecureBaseUrl());
+                $context = $router->getContext();
+                $newContext = Context::createFromShop($this->shop, $this->config);
+                // Reuse the host
+                if ($newContext->getHost() === null) {
+                    $newContext->setHost($context->getHost());
+                    $newContext->setBaseUrl($context->getBaseUrl());
+                    $newContext->setSecure($context->isSecure());
                 }
+                if (version_compare($currentVersion, '5.4.0', '<')) {
+                    // the following methods are removed in Shopware 5.4
+                    $newContext->setAlwaysSecure($this->shop->getAlwaysSecure());
+                    $newContext->setSecureHost($this->shop->getSecureHost());
+                    $newContext->setSecureBaseUrl($this->shop->getSecureBaseUrl());
+                }
+                // Reuse the global params like controller and action
+                $globalParams = $context->getGlobalParams();
+                $newContext->setGlobalParams($globalParams);
+                // Check baseUrl
+                $newContext->setBaseUrl(
+                    $newContext->getBaseUrl() ? $newContext->getBaseUrl() : $this->shop->getBasePath()
+                );
+                $router->setContext($newContext);
             }
         }
     }
@@ -119,8 +145,10 @@ abstract class ApiUrlDecorator
                 if ($action === 'get') {
                     if (is_array($data) && isset($data['id'])) {
                         $url = $this->getItemUrl($data['id']);
-                        $data = array_merge_recursive($this->controller->View()->getAssign('data'),
-                            ['pxShopwareUrl' => $url]);
+                        $data = array_merge_recursive(
+                            $this->controller->View()->getAssign('data'),
+                            ['pxShopwareUrl' => $url]
+                        );
                     }
                 }
 
@@ -162,6 +190,4 @@ abstract class ApiUrlDecorator
      * @return string
      */
     abstract protected function getItemUrl($itemId);
-
-
 }

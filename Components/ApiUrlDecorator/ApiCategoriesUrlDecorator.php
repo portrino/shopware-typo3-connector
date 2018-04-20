@@ -1,8 +1,8 @@
 <?php
-
 namespace Port1Typo3Connector\Components\ApiUrlDecorator;
 
 use Port1Typo3Connector\Components\ApiUrlDecorator;
+use Shopware\Components\Routing\Router;
 
 /**
  * Class ApiCategoriesUrlDecorator
@@ -14,15 +14,27 @@ class ApiCategoriesUrlDecorator extends ApiUrlDecorator
 
     /**
      * @param int $itemId
+     * @return null|string
+     * @throws \Exception
      */
     protected function getItemUrl($itemId)
-{
-    $arr = [
-        'sViewport' => 'cat',
-        'sCategory' => $itemId,
-        'module' => 'frontend',
-    ];
-    return $this->controller->Front()->Router()->assemble($arr);
-}
+    {
+        $arr = [
+            'sViewport' => 'cat',
+            'sCategory' => $itemId,
+            'module' => 'frontend',
+        ];
+        $result = null;
+        $router = $this->controller->Front()->Router();
+        if ($router instanceof Router) {
+            $url = $router->assemble($arr);
+            if ($url !== false) {
+                $result = $router->getContext()->isUrlToLower() ?
+                    strtolower($url) :
+                    $url;
+            }
+        }
+        return $result;
+    }
 
 }

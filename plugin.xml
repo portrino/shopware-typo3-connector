@@ -73,5 +73,5 @@
         </changes>
     </changelog>
 
-    <compatibility minVersion="5.2.0" />
+    <compatibility minVersion="5.2.17" />
 </plugin>
