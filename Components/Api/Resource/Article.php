@@ -29,12 +29,14 @@ class Article extends \Shopware\Components\Api\Resource\Article
         $builder = $this->getRepository()->createQueryBuilder('article')
                         ->addSelect([
                             'attribute',
-                            'categories'
+                            'categories',
+                            'images'
                         ])
                         ->addSelect('mainDetail.lastStock')
                         ->leftJoin('article.mainDetail', 'mainDetail')
                         ->leftJoin('mainDetail.attribute', 'attribute')
-                        ->leftJoin('article.categories', 'categories');
+                        ->leftJoin('article.categories', 'categories')
+                        ->leftJoin('article.images', 'images');
 
         $builder->addFilter($criteria)
                 ->addOrderBy($orderBy)
