@@ -16,6 +16,18 @@
     <description lang="de">Ermöglicht die Kommunikation mit der TYPO3-Erweiterung "PxShopware"</description>
     <description lang="en">Enables communication with TYPO3-Extension "PxShopware".</description>
 
+    <changelog version="2.1.0">
+        <changes lang="de">
+            [BUGFIX] Fügt Artikel API Resource hinzu, um die translateArticle() Methode aus der Eltern-Resource zu
+            erweitern/ dekorieren. Die stellt den Patch SW-20486 für Shopware mit der Version kleiner als v5.4.0 zur
+            Verfügung.
+        </changes>
+        <changes lang="en">
+            [BUGFIX] adds article api resource component to extend/ decorate the translateArticle() method
+            to apply patch from SW-20486 for Shopware version lower than v5.4.0
+        </changes>
+    </changelog>
+
     <changelog version="2.0.3">
         <changes lang="de">
             OpenSource Release on GitHub
