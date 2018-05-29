@@ -3,7 +3,7 @@
     <label lang="de">TYPO3-Connector</label>
     <label lang="en">TYPO3-Connector</label>
 
-    <version>2.0.3</version>
+    <version>2.2.0</version>
 
     <copyright>© 2017 by portrino GmbH</copyright>
 
@@ -15,6 +15,19 @@
 
     <description lang="de">Ermöglicht die Kommunikation mit der TYPO3-Erweiterung "PxShopware"</description>
     <description lang="en">Enables communication with TYPO3-Extension "PxShopware".</description>
+
+    <changelog version="2.2.0">
+        <changes lang="de">
+            [TASK] Fügt Versionsbeschränkung für in Shopware 5.4 veraltete Methodenaufrufe hinzu
+            [TASK] fügt Article API Resource Decorator hinzu, um Artikel nach Kategorie filtern zu können
+            [TASK] aktualisiert ApiUrlDecorator(s) -> korrigiert URL-Generierung im Sprachkontext
+        </changes>
+        <changes lang="en">
+            [TASK] Adds version constraint for deprecated method calls in shopware 5.4
+            [TASK] adds Article api resource decorator, to allow filtering articles by category
+            [TASK] updates ApiUrlDecorator(s) -> fixes url generation in language context
+        </changes>
+    </changelog>
 
     <changelog version="2.1.0">
         <changes lang="de">
