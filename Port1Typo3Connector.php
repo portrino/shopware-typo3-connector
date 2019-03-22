@@ -1,10 +1,12 @@
 <?php
 namespace Port1Typo3Connector;
 
+use Port1Typo3Connector\Components\Api\Resource\Variant;
 use Port1Typo3Connector\Components\ApiArticlesOrderNumberDecorator;
 use Port1Typo3Connector\Components\ApiTokenDecorator;
 use Port1Typo3Connector\Components\ApiUrlDecorator\ApiArticlesUrlDecorator;
 use Port1Typo3Connector\Components\ApiUrlDecorator\ApiCategoriesUrlDecorator;
+use Port1Typo3Connector\Components\ApiUrlDecorator\ApiVariantsUrlDecorator;
 use Port1Typo3Connector\Service\Notification\Command;
 use Port1Typo3Connector\Service\Notification\Typo3NotificationService;
 use Shopware\Bundle\AttributeBundle\Service\TypeMapping;
@@ -175,6 +177,16 @@ class Port1Typo3Connector extends Plugin
     public function onApiCategoriesAddUrl(\Enlight_Event_EventArgs $args)
     {
         $apiUrlDecorator = new ApiCategoriesUrlDecorator($args->get('subject'), $this->container);
+        $apiUrlDecorator->addUrl();
+    }
+
+    /**
+     * @param \Enlight_Event_EventArgs $args
+     * @throws \Exception
+     */
+    public function onApiVariantsAddUrl(\Enlight_Event_EventArgs $args)
+    {
+        $apiUrlDecorator = new ApiVariantsUrlDecorator($args->get('subject'), $this->container);
         $apiUrlDecorator->addUrl();
     }
 

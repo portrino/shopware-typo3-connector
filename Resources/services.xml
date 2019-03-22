@@ -8,6 +8,7 @@
             Overrides
         -->
         <service id="shopware.api.article" class="Port1Typo3Connector\Components\Api\Resource\Article" />
+        <service id="shopware.api.variant" class="Port1Typo3Connector\Components\Api\Resource\Variant" />
 
         <!--
             Services

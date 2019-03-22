@@ -186,8 +186,9 @@ abstract class ApiUrlDecorator
 
     /**
      * @param int $itemId
+     * @param string $orderNumber
      *
      * @return string
      */
-    abstract protected function getItemUrl($itemId);
+    abstract protected function getItemUrl($itemId, $orderNumber = null);
 }
