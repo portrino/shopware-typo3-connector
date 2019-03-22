@@ -9,7 +9,7 @@ if [ -z ${commit} ]; then
 fi
 
 # Remove old release
-rm -rf Port1Typo3Connector Port1Typo3Connector-*.zip
+rm -rf Port1Typo3Connector/ Port1Typo3Connector-*.zip
 
 # Build new release
 mkdir -p Port1Typo3Connector
