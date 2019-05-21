@@ -13,6 +13,7 @@ use Shopware\Bundle\StoreFrontBundle\Struct\Product;
 use Shopware\Components\Api\Exception as ApiException;
 use Shopware\Components\Api\Resource\Translation;
 use Shopware\Components\Model\QueryBuilder;
+use Shopware\Models\Article\Detail;
 use Shopware\Models\Shop\Shop;
 
 /**
@@ -22,6 +23,96 @@ use Shopware\Models\Shop\Shop;
  */
 class Variant extends \Shopware\Components\Api\Resource\Variant
 {
+
+    /**
+     * @param int $id
+     * @param array $options
+     *
+     * @return array|Detail
+     * @throws ApiException\CustomValidationException
+     * @throws ApiException\NotFoundException
+     * @throws ApiException\ParameterMissingException
+     * @throws ApiException\PrivilegeException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getOne($id, array $options = [])
+    {
+        $this->checkPrivilege('read');
+
+        if (empty($id)) {
+            throw new ApiException\ParameterMissingException();
+        }
+
+        $builder = $this->getRepository()->createQueryBuilder('detail')
+                        ->addSelect([
+                            'prices',
+                            'attribute',
+                            'partial article.{id,name,description,descriptionLong,active,taxId,changed}',
+                            'customerGroup',
+                            'options',
+                            'images'
+                        ])
+                        ->leftJoin('detail.prices', 'prices')
+                        ->innerJoin('prices.customerGroup', 'customerGroup')
+                        ->leftJoin('detail.attribute', 'attribute')
+                        ->innerJoin('detail.article', 'article')
+                        ->leftJoin('article.images', 'images')
+                        ->leftJoin('detail.configuratorOptions', 'options');
+
+        $builder->andWhere('detail.id = :variantId')
+                ->addOrderBy('detail.id', 'ASC')
+                ->addOrderBy('customerGroup.id', 'ASC')
+                ->addOrderBy('prices.from', 'ASC')
+                ->setParameter('variantId', $id);
+
+        /** @var Detail|array $variant */
+        $variant = $builder->getQuery()->getOneOrNullResult($this->getResultMode());
+
+        if (!$variant) {
+            throw new ApiException\NotFoundException(sprintf('Variant by id %d not found', $id));
+        }
+
+        if (($this->getResultMode() === self::HYDRATE_ARRAY)
+            && isset($options['considerTaxInput'])
+            && $options['considerTaxInput']
+        ) {
+            $variant = $this->considerTaxInput($variant);
+        }
+
+        try {
+            $frontController = Shopware()->Front();
+            if ($frontController) {
+                $params = $frontController->Request()->getParams();
+                if (!array_key_exists('language', $options) && array_key_exists('language', $params)) {
+                    $options['language'] = $params['language'];
+                }
+            }
+        } catch (\Exception $e) {
+            // ...
+        }
+
+        if ($this->getResultMode() === self::HYDRATE_ARRAY
+            && isset($options['language'])
+            && !empty($options['language'])) {
+            /** @var Shop $shop */
+            $shop = $this->findEntityByConditions(Shop::class, [
+                ['id' => $options['language']],
+            ]);
+
+            $variant['article'] = $this->translateArticle($variant['article'], $shop);
+
+            /** @var \Shopware\Bundle\StoreFrontBundle\Service\ProductServiceInterface $contextService */
+            $productService = $this->container->get('shopware_storefront.product_service');
+            /** @var \Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface $contextService */
+            $contextService = $this->container->get('shopware_storefront.context_service');
+            /** @var Product $product */
+            $product = $productService->get($variant['number'], $contextService->createShopContext($shop->getId()));
+
+            $variant['article']['images'] = $this->getSortedArticleImages($variant['article']['images'], $product);
+        }
+
+        return $variant;
+    }
 
     /**
      * @param int $offset
