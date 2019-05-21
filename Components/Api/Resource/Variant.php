@@ -8,6 +8,8 @@ namespace Port1Typo3Connector\Components\Api\Resource;
  * Written by Axel Boeswetter <boeswetter@portrino.de>, portrino GmbH
  */
 
+use Shopware\Bundle\StoreFrontBundle\Struct\Media;
+use Shopware\Bundle\StoreFrontBundle\Struct\Product;
 use Shopware\Components\Api\Exception as ApiException;
 use Shopware\Components\Api\Resource\Translation;
 use Shopware\Components\Model\QueryBuilder;
@@ -79,9 +81,12 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
         }
 
         try {
-            $params = $this->container->get('front')->Request()->getParams();
-            if (!array_key_exists('language', $options) && array_key_exists('language', $params)) {
-                $options['language'] = $params['language'];
+            $frontController = Shopware()->Front();
+            if ($frontController) {
+                $params = $frontController->Request()->getParams();
+                if (!array_key_exists('language', $options) && array_key_exists('language', $params)) {
+                    $options['language'] = $params['language'];
+                }
             }
         } catch (\Exception $e) {
             // ...
@@ -98,6 +103,15 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
             /** @var array $variant */
             foreach ($variants as &$variant) {
                 $variant['article'] = $this->translateArticle($variant['article'], $shop);
+
+                /** @var \Shopware\Bundle\StoreFrontBundle\Service\ProductServiceInterface $contextService */
+                $productService = $this->container->get('shopware_storefront.product_service');
+                /** @var \Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface $contextService */
+                $contextService = $this->container->get('shopware_storefront.context_service');
+                /** @var Product $product */
+                $product = $productService->get($variant['number'], $contextService->createShopContext($shop->getId()));
+
+                $variant['article']['images'] = $this->getSortedArticleImages($variant['article']['images'], $product);
             }
             unset($variant);
             $this->translateVariants($variants, $shop);
@@ -109,9 +123,9 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
     /**
      * @param array $variant
      *
+     * @return array
      * @throws ApiException\CustomValidationException
      *
-     * @return array
      */
     private function considerTaxInput(array $variant)
     {
@@ -153,7 +167,7 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
      * Translate the whole product array.
      *
      * @param array $data
-     * @param Shop  $shop
+     * @param Shop $shop
      *
      * @return array
      */
@@ -257,7 +271,7 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
      * Translates the passed values array with the passed shop entity.
      *
      * @param array $values
-     * @param Shop  $shop
+     * @param Shop $shop
      *
      * @return mixed
      */
@@ -292,7 +306,7 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
      * Translates the passed supplier data.
      *
      * @param array $supplier
-     * @param Shop  $shop
+     * @param Shop $shop
      *
      * @return array
      */
@@ -321,7 +335,7 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
      * Translates the passed property group data.
      *
      * @param array $groupData
-     * @param Shop  $shop
+     * @param Shop $shop
      *
      * @return array
      */
@@ -353,7 +367,7 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
      * Translates the passed variants array and all associated data.
      *
      * @param array $details
-     * @param Shop  $shop
+     * @param Shop $shop
      *
      * @return mixed
      */
@@ -430,8 +444,8 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
     /**
      * Helper function which translates associated array data.
      *
-     * @param array  $association
-     * @param Shop   $shop
+     * @param array $association
+     * @param Shop $shop
      * @param string $type
      *
      * @return array
@@ -457,7 +471,7 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
      * Helper function to get a single translation.
      *
      * @param string $type
-     * @param int    $shopId
+     * @param int $shopId
      * @param string $key
      *
      * @return array
@@ -471,5 +485,37 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
         ]);
 
         return $translation['data'][0];
+    }
+
+    /**
+     * @param array $images
+     * @param Product $product
+     * @return array
+     */
+    private function getSortedArticleImages($images, $product)
+    {
+        $result = [];
+
+        if ($product->getCover()) {
+            foreach ($images as $image) {
+                if ($image['mediaId'] === $product->getCover()->getId()) {
+                    $result[] = $image;
+                }
+            }
+        }
+        if ($product->getMedia()) {
+            /** @var Media $media */
+            foreach ($product->getMedia() as $media) {
+                foreach ($images as $image) {
+                    if ($image['mediaId'] === $media->getId()) {
+                        if (!$product->getCover() || ($product->getCover() && $media->getId() !== $product->getCover()->getId())) {
+                            $result[] = $image;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $result;
     }
 }
