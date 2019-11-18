@@ -94,7 +94,7 @@ abstract class ApiUrlDecorator
             $router = $this->controller->Front()->Router();
 
             if ($router instanceof Router) {
-                if (\Shopware::VERSION !== '___VERSION___') {
+                if (defined('\Shopware::VERSION') && \Shopware::VERSION !== '___VERSION___') {
                     $currentVersion = \Shopware::VERSION;
                 } else {
                     // if '___VERSION___' is given, it seems to be a composer installation
