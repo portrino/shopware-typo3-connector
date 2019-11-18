@@ -101,7 +101,7 @@ class Article extends \Shopware\Components\Api\Resource\Article
      */
     protected function translateArticle(array $data, Shop $shop)
     {
-        if (version_compare(\Shopware::VERSION, '5.4.0', '<')) {
+        if (defined('\Shopware::VERSION') && version_compare(\Shopware::VERSION, '5.4.0', '<')) {
             $result = $this->translateArticleDecorator($data, $shop);
         } else {
             $result = parent::translateArticle($data, $shop);
