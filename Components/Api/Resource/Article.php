@@ -60,7 +60,7 @@ class Article extends \Shopware\Components\Api\Resource\Article
         $totalResult = $paginator->count();
 
         /**
-         * @Deprecated
+         * @Deprecated Since 5.4, to be removed in 5.6
          *
          * To support Shopware <= 5.3 we make sure the lastStock-column of the main variant is being used instead of the
          * one on the product itself.
@@ -75,7 +75,7 @@ class Article extends \Shopware\Components\Api\Resource\Article
         if ($this->getResultMode() === self::HYDRATE_ARRAY
             && isset($options['language'])
             && !empty($options['language'])) {
-            /** @var $shop Shop */
+            /** @var Shop $shop */
             $shop = $this->findEntityByConditions(Shop::class, [
                 ['id' => $options['language']],
             ]);
@@ -95,13 +95,14 @@ class Article extends \Shopware\Components\Api\Resource\Article
      * Translate the whole article array.
      *
      * @param array $data
-     * @param Shop  $shop
+     * @param Shop $shop
      *
      * @return array
      */
     protected function translateArticle(array $data, Shop $shop)
     {
-        if (version_compare(\Shopware::VERSION, '5.4.0', '<')) {
+        $version = \Shopware::VERSION !== '___VERSION___' ? \Shopware::VERSION : Shopware()->Container()->getParameter('shopware.release.version');
+        if (version_compare($version, '5.4.0', '<')) {
             $result = $this->translateArticleDecorator($data, $shop);
         } else {
             $result = parent::translateArticle($data, $shop);
