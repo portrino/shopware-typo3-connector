@@ -101,7 +101,9 @@ class Article extends \Shopware\Components\Api\Resource\Article
      */
     protected function translateArticle(array $data, Shop $shop)
     {
-        $version = \Shopware::VERSION !== '___VERSION___' ? \Shopware::VERSION : Shopware()->Container()->getParameter('shopware.release.version');
+        $version = defined('\Shopware::VERSION') && \Shopware::VERSION !== '___VERSION___' ?
+            \Shopware::VERSION :
+            Shopware()->Container()->getParameter('shopware.release.version');
         if (version_compare($version, '5.4.0', '<')) {
             $result = $this->translateArticleDecorator($data, $shop);
         } else {
