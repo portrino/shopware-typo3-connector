@@ -14,10 +14,11 @@ class ApiArticlesUrlDecorator extends ApiUrlDecorator
 
     /**
      * @param int $itemId
+     * @param string $orderNumber
      * @return null|string
      * @throws \Exception
      */
-    protected function getItemUrl($itemId)
+    protected function getItemUrl($itemId, $orderNumber = null)
     {
         $arr = [
             'sViewport' => 'detail',
