@@ -3,7 +3,7 @@
     <label lang="de">TYPO3-Connector</label>
     <label lang="en">TYPO3-Connector</label>
 
-    <version>2.4.1</version>
+    <version>2.5.0</version>
 
     <copyright>© 2019 by portrino GmbH</copyright>
 
@@ -15,6 +15,17 @@
 
     <description lang="de">Ermöglicht die Kommunikation mit der TYPO3-Erweiterung "PxShopware"</description>
     <description lang="en">Enables communication with TYPO3-Extension "PxShopware".</description>
+
+    <changelog version="2.5.0">
+        <changes lang="de">
+            [!!!][BUGFIX] Aktualisiert die Neuinitialisierung des Shop-Kontexts im ApiUrlDecorator, um die richtige Basis-URL in Sprach-Sub-Shops zu verwenden
+            [!!!] Dies ist eine wichtige Änderung, da sich die URL-Generierung für die Entität "pxShopwareUrl" in allen API-Antworten in Bezug auf Ihr Setup ändern kann
+        </changes>
+        <changes lang="en">
+            [!!!][BUGFIX] updates reinitialization of the shop context in the ApiUrlDecorator to use the correct base URL in language sub-shops
+            [!!!] this is a breaking change, as the URL generation for the entity "pxShopwareUrl" in all API responses may change regarding your setup
+        </changes>
+    </changelog>
 
     <changelog version="2.4.1">
         <changes lang="de">

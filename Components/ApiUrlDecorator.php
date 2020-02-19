@@ -77,10 +77,10 @@ abstract class ApiUrlDecorator
         $this->request = $this->controller->Request();
         $this->view = $this->controller->View();
         $this->shopResource = Manager::getResource('shop');
-        $this->isPxShopwareRequest = ($this->request->getParam('px_shopware') != null) ? (bool)$this->request->getParam('px_shopware') : false;
+        $this->isPxShopwareRequest = ($this->request->getParam('px_shopware') !== null) ? (bool)$this->request->getParam('px_shopware') : false;
 
         if ($this->isPxShopwareRequest) {
-            $language = ($this->request->getParam('language') != null) ? (int)$this->request->getParam('language') : false;
+            $language = ($this->request->getParam('language') !== null) ? (int)$this->request->getParam('language') : false;
             if ($language !== false) {
                 // we cannot use this query, because of bug described here: https://issues.shopware.com/#/issues/SW-15388
                 // $this->shop = $this->shopResource->getRepository()->queryBy(array('active' => TRUE, 'locale' => $language))->getOneOrNullResult();
@@ -99,9 +99,7 @@ abstract class ApiUrlDecorator
                 } else {
                     // if '___VERSION___' is given, it seems to be a composer installation
                     // composer is available from 5.4 on and there we have the container 'shopware.release'
-                    /** @var \Shopware\Components\ShopwareReleaseStruct $shopwareRelease */
-                    $shopwareRelease = $this->container->get('shopware.release');
-                    $currentVersion = $shopwareRelease->getVersion();
+                    $currentVersion = $this->container->getParameter('shopware.release.version');
                 }
 
                 $context = $router->getContext();
@@ -109,8 +107,8 @@ abstract class ApiUrlDecorator
                 // Reuse the host
                 if ($newContext->getHost() === null) {
                     $newContext->setHost($context->getHost());
-                    $newContext->setBaseUrl($context->getBaseUrl());
-                    $newContext->setSecure($context->isSecure());
+                    $newContext->setBaseUrl($this->shop->getBaseUrl() ?: $context->getBaseUrl());
+                    $newContext->setSecure($this->shop->getSecure() ?: $context->isSecure());
                 }
                 if (version_compare($currentVersion, '5.4.0', '<')) {
                     // the following methods are removed in Shopware 5.4
@@ -162,7 +160,6 @@ abstract class ApiUrlDecorator
                         }
                         $data = $items;
                     }
-
                 }
 
                 $this->controller->View()->clearAssign('data');
