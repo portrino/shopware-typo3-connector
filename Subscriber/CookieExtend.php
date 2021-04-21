@@ -46,11 +46,7 @@ class CookieExtend implements SubscriberInterface
             $cookieLabels = explode('|', $cookieLabels);
 
             if ($cookieNames && $cookieLabels && count($cookieNames) === count($cookieLabels)) {
-
                 foreach ($cookieNames as $key => $name) {
-                    var_dump($name . ' : ' . $cookieLabels[$key]);
-                    echo '<br>';
-
                     if ($name && $cookieLabels[$key]) {
                         // TODO: different matchingPattern?
                         $collection->add(new CookieStruct(

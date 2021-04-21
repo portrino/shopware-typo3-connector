@@ -16,6 +16,15 @@
     <description lang="de">Ermöglicht die Kommunikation mit der TYPO3-Erweiterung "PxShopware"</description>
     <description lang="en">Enables communication with TYPO3-Extension "PxShopware".</description>
 
+    <changelog version="2.6.1">
+        <changes lang="de">
+            [CLEANUP] debug Ausgaben entfernt
+        </changes>
+        <changes lang="en">
+            [CLEANUP] remove debug output
+        </changes>
+    </changelog>
+
     <changelog version="2.6.0">
         <changes lang="de">
             [TASK] fügt einige TYPO3 Cookies zur Gruppe "technical" hinzu, damit sie von Shopware nicht direkt gelöscht werden, anpassbar in Textbausteinen
