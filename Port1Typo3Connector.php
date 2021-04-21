@@ -1,7 +1,6 @@
 <?php
 namespace Port1Typo3Connector;
 
-use Port1Typo3Connector\Components\Api\Resource\Variant;
 use Port1Typo3Connector\Components\ApiArticlesOrderNumberDecorator;
 use Port1Typo3Connector\Components\ApiTokenDecorator;
 use Port1Typo3Connector\Components\ApiUrlDecorator\ApiArticlesUrlDecorator;
@@ -14,7 +13,6 @@ use Shopware\Bundle\StoreFrontBundle\Struct\Media;
 use Shopware\Components\Model\ModelEntity;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\InstallContext;
-use Shopware\Kernel;
 use Shopware\Models\Article\Article;
 use Shopware\Models\Category\Category;
 use Shopware\Models\Shop\Shop;

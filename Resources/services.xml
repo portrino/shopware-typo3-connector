@@ -17,5 +17,10 @@
         <service id="port1_typo3_connector.typo3_notification_service" class="Port1Typo3Connector\Service\Notification\Typo3NotificationService">
             <argument type="service" id="models" />
         </service>
+
+        <service id="Port1Typo3Connector\Subscriber\CookieExtend">
+            <argument type="service" id="snippets" />
+            <tag name="shopware.event_subscriber" />
+        </service>
     </services>
 </container>
