@@ -3,7 +3,7 @@
     <label lang="de">TYPO3-Connector</label>
     <label lang="en">TYPO3-Connector</label>
 
-    <version>2.6.0</version>
+    <version>2.6.2</version>
 
     <copyright>© 2019 by portrino GmbH</copyright>
 
@@ -15,6 +15,15 @@
 
     <description lang="de">Ermöglicht die Kommunikation mit der TYPO3-Erweiterung "PxShopware"</description>
     <description lang="en">Enables communication with TYPO3-Extension "PxShopware".</description>
+
+    <changelog version="2.6.2">
+        <changes lang="de">
+            [BUGFIX] markiere Service Klassen als "public" in services.xml
+        </changes>
+        <changes lang="en">
+            [BUGFIX] mark Service classes as "public" in services.xml
+        </changes>
+    </changelog>
 
     <changelog version="2.6.1">
         <changes lang="de">
@@ -75,8 +84,8 @@
     <changelog version="2.2.0">
         <changes lang="de">
             [TASK] Fügt Versionsbeschränkung für in Shopware 5.4 veraltete Methodenaufrufe hinzu
-            [TASK] fügt Article API Resource Decorator hinzu, um Artikel nach Kategorie filtern zu können
-            [TASK] aktualisiert ApiUrlDecorator(s) -> korrigiert URL-Generierung im Sprachkontext
+            [TASK] fügt Article API Resource Decorator hinzu, um Artikel nach Kategorie filtern zu können
+            [TASK] aktualisiert ApiUrlDecorator(s) -> korrigiert URL-Generierung im Sprachkontext
         </changes>
         <changes lang="en">
             [TASK] Adds version constraint for deprecated method calls in shopware 5.4
@@ -108,49 +117,49 @@
 
     <changelog version="2.0.2">
         <changes lang="de">
-            [FEATURE]    Fügt die Möglichkeit hinzu über einen Key in der config.php die checkLicence() Methode
+            [FEATURE] Fügt die Möglichkeit hinzu über einen Key in der config.php die checkLicence() Methode
             zu umgehen.
         </changes>
         <changes lang="en">
-            [BUGFIX]    Adds possibility to prevent checkLicence() method via key in config.php
+            [BUGFIX] Adds possibility to prevent checkLicence() method via key in config.php
         </changes>
     </changelog>
 
     <changelog version="2.0.1">
         <changes lang="de">
-            [BUGFIX]    Behebt einen Fehler welcher nach dem Speichern eines Artikels auftritt, wenn für den aktuellen
+            [BUGFIX] Behebt einen Fehler welcher nach dem Speichern eines Artikels auftritt, wenn für den aktuellen
             Backend Benutzer keine TYPO3 API-URL hinterlegt ist.
         </changes>
         <changes lang="en">
-            [BUGFIX]    Fixes a bug which leads to an exception after create / update / delete article in backend when
+            [BUGFIX] Fixes a bug which leads to an exception after create / update / delete article in backend when
             there is no TYPO3 API-URL configured for the current backend user.
         </changes>
     </changelog>
 
     <changelog version="2.0.0">
         <changes lang="de">
-            [FEATURE]   Benachrichtigung von TYPO3 wenn Artikel, Kategorie, Media oder Shop Model hinzugefügt, geändert
-                        oder gelöscht wird
+            [FEATURE] Benachrichtigung von TYPO3 wenn Artikel, Kategorie, Media oder Shop Model hinzugefügt, geändert
+            oder gelöscht wird
 
-            [FEATURE]   Fügt Bestellnummer an /articles API-Aufruf zur Performance-Optimierung auf TYPO3-Seite
+            [FEATURE] Fügt Bestellnummer an /articles API-Aufruf zur Performance-Optimierung auf TYPO3-Seite
 
-            [TASK]      Adaption des Plugins an das Shopware 5.2 Plugin System
-                        (https://developers.shopware.com/developers-guide/plugin-system/)
+            [TASK] Adaption des Plugins an das Shopware 5.2 Plugin System
+            (https://developers.shopware.com/developers-guide/plugin-system/)
 
-            [BUGFIX]    Fehlerbehung das Urls in API Antwort nicht die Konfiguration des Shops berücksichtigen
-                        (z.B.: secureHost, secure, baseUrl,...)
+            [BUGFIX] Fehlerbehung das Urls in API Antwort nicht die Konfiguration des Shops berücksichtigen
+            (z.B.: secureHost, secure, baseUrl,...)
         </changes>
         <changes lang="en">
-            [FEATURE]   Adds NotificationService to send notification message to TYPO3 if article, product, shop or
-                        media model created, updated or deleted
+            [FEATURE] Adds NotificationService to send notification message to TYPO3 if article, product, shop or
+            media model created, updated or deleted
 
-            [FEATURE]   Adds Order Number to API /article response to improve performance on TYPO3 site
+            [FEATURE] Adds Order Number to API /article response to improve performance on TYPO3 site
 
-            [TASK]      Plugin Adaption to new Shopware 5.2 Plugin System
-                        (https://developers.shopware.com/developers-guide/plugin-system/)
+            [TASK] Plugin Adaption to new Shopware 5.2 Plugin System
+            (https://developers.shopware.com/developers-guide/plugin-system/)
 
-            [BUGFIX]    Fixes bug where the url`s to the articles and categories do not respect the shop settings
-                        from backend (e.g. secureHost, secure, baseUrl, ...)
+            [BUGFIX] Fixes bug where the url`s to the articles and categories do not respect the shop settings
+            from backend (e.g. secureHost, secure, baseUrl, ...)
         </changes>
     </changelog>
 
