@@ -2,8 +2,8 @@
 
 namespace Port1Typo3Connector\Components;
 
-use Shopware\Components\Api\Manager;
 use Shopware\Components\Model\QueryBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class ApiArticlesOrderNumberDecorator
@@ -12,6 +12,11 @@ use Shopware\Components\Model\QueryBuilder;
  */
 class ApiArticlesOrderNumberDecorator
 {
+
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
 
     /**
      * @var \Shopware_Controllers_Api_Articles
@@ -29,7 +34,7 @@ class ApiArticlesOrderNumberDecorator
     protected $isPxShopwareRequest = false;
 
     /**
-     * @var Shopware\Components\Api\Resource\Article
+     * @var \Shopware\Components\Api\Resource\Article
      */
     protected $resource = null;
 
@@ -37,15 +42,17 @@ class ApiArticlesOrderNumberDecorator
      * ApiTokenDecorator constructor.
      *
      * @param \Enlight_Controller_Action $controller
+     * @param ContainerInterface $container
      */
-    public function __construct(\Enlight_Controller_Action $controller)
+    public function __construct(\Enlight_Controller_Action $controller, ContainerInterface $container)
     {
+        $this->container = $container;
         $this->controller = $controller;
         $this->request = $this->controller->Request();
-        $this->isPxShopwareRequest = ($this->request->getParam('px_shopware') != null) ? (bool)$this->request->getParam('px_shopware') : false;
+        $this->isPxShopwareRequest = ($this->request->getParam('px_shopware') !== null) ? (bool)$this->request->getParam('px_shopware') : false;
 
         if ($this->isPxShopwareRequest) {
-            $this->resource = Manager::getResource('article');
+            $this->resource = $this->container->get('shopware.api.article');
         }
     }
 
@@ -121,10 +128,9 @@ class ApiArticlesOrderNumberDecorator
             /** @var $detail \Shopware\Models\Article\Detail */
             $detail = $builder->getQuery()->getOneOrNullResult();
 
-            if ($detail != null) {
+            if ($detail !== null) {
                 return $detail->getNumber();
             }
-
         } catch (\Exception $e) {
             return '';
         }
@@ -133,7 +139,7 @@ class ApiArticlesOrderNumberDecorator
     /**
      * Internal helper function to get access to the article repository.
      *
-     * @return Shopware\Models\Article\Repository
+     * @return \Shopware\Models\Article\Repository
      */
     protected function getRepository()
     {
@@ -143,5 +149,4 @@ class ApiArticlesOrderNumberDecorator
 
         return $this->repository;
     }
-
 }

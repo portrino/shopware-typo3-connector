@@ -193,7 +193,7 @@ class Port1Typo3Connector extends Plugin
      */
     public function onApiArticlesAddOrderNumber(\Enlight_Event_EventArgs $args)
     {
-        $apiOrderNumberDecorator = new ApiArticlesOrderNumberDecorator($args->get('subject'));
+        $apiOrderNumberDecorator = new ApiArticlesOrderNumberDecorator($args->get('subject'), $this->container);
         $apiOrderNumberDecorator->addOrderNumber();
     }
 

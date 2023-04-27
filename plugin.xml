@@ -3,7 +3,7 @@
     <label lang="de">TYPO3-Connector</label>
     <label lang="en">TYPO3-Connector</label>
 
-    <version>2.6.2</version>
+    <version>3.0.0</version>
 
     <copyright>© 2019 by portrino GmbH</copyright>
 
@@ -15,6 +15,15 @@
 
     <description lang="de">Ermöglicht die Kommunikation mit der TYPO3-Erweiterung "PxShopware"</description>
     <description lang="en">Enables communication with TYPO3-Extension "PxShopware".</description>
+
+    <changelog version="3.0.0">
+        <changes lang="de">
+            [BUGFIX] aktualisiert ApiUrlDecorator um Kompatibilität mit Shopware >= 5.7 herzustellen
+        </changes>
+        <changes lang="en">
+            [BUGFIX] updates ApiUrlDecorator to be compatible with Shopware >= 5.7
+        </changes>
+    </changelog>
 
     <changelog version="2.6.2">
         <changes lang="de">
@@ -163,5 +172,5 @@
         </changes>
     </changelog>
 
-    <compatibility minVersion="5.2.17" />
+    <compatibility minVersion="5.7.0" />
 </plugin>

@@ -2,6 +2,12 @@
 
 namespace Port1Typo3Connector\Service\Notification;
 
+use Shopware\Components\Model\ModelEntity;
+use Shopware\Models\Article\Article;
+use Shopware\Models\Category\Category;
+use Shopware\Models\Media\Media;
+use Shopware\Models\Shop\Shop;
+
 /**
  * Interface NotificationServiceInterface
  *

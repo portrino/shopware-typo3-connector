@@ -40,7 +40,7 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
         $this->checkPrivilege('read');
 
         if (empty($id)) {
-            throw new ApiException\ParameterMissingException();
+            throw new ApiException\ParameterMissingException($id);
         }
 
         $builder = $this->getRepository()->createQueryBuilder('detail')
@@ -93,7 +93,8 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
 
         if ($this->getResultMode() === self::HYDRATE_ARRAY
             && isset($options['language'])
-            && !empty($options['language'])) {
+            && !empty($options['language'])
+        ) {
             /** @var Shop $shop */
             $shop = $this->findEntityByConditions(Shop::class, [
                 ['id' => $options['language']],
@@ -185,7 +186,8 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
 
         if ($this->getResultMode() === self::HYDRATE_ARRAY
             && isset($options['language'])
-            && !empty($options['language'])) {
+            && !empty($options['language'])
+        ) {
             /** @var Shop $shop */
             $shop = $this->findEntityByConditions(Shop::class, [
                 ['id' => $options['language']],
@@ -249,7 +251,7 @@ class Variant extends \Shopware\Components\Api\Resource\Variant
     protected function getTranslationResource()
     {
         /** @var Translation $return */
-        $return = $this->getResource('Translation');
+        $return = $this->container->get('shopware.api.translation');
 
         return $return;
     }

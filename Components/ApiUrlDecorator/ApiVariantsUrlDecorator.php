@@ -99,5 +99,4 @@ class ApiVariantsUrlDecorator extends ApiUrlDecorator
         }
         return $result;
     }
-
 }

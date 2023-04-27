@@ -31,7 +31,7 @@ class ApiTokenDecorator
     public function addApiToken()
     {
         $request = $this->controller->Request();
-        $pxShopware = ($request->getParam('px_shopware') != null) ? (bool)$request->getParam('px_shopware') : false;
+        $pxShopware = ($request->getParam('px_shopware') !== null) ? (bool)$request->getParam('px_shopware') : false;
         if ($pxShopware) {
             $this->controller->View()->assign('pxShopwareTypo3Token', 1);
         }

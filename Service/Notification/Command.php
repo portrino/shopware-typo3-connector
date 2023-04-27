@@ -94,8 +94,6 @@ class Command
         $result = '';
         /** @var \ReflectionClass $reflection */
         $reflection = new \ReflectionClass(get_class($entity));
-        $type = strtolower($reflection->getShortName());
-
-        return $type;
+        return strtolower($reflection->getShortName());
     }
 }

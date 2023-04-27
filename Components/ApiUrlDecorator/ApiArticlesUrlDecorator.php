@@ -38,5 +38,4 @@ class ApiArticlesUrlDecorator extends ApiUrlDecorator
         }
         return $result;
     }
-
 }

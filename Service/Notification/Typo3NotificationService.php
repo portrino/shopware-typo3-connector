@@ -63,7 +63,7 @@ class Typo3NotificationService extends NotificationService
     /**
      * @param Command $command
      *
-     * @return mixed
+     * @return void
      */
     protected function sendNotification(Command $command) {
         if ($this->isHttpClientInitialized()) {
@@ -78,5 +78,4 @@ class Typo3NotificationService extends NotificationService
             $this->client->request(\Zend_Http_Client::POST);
         }
     }
-
 }

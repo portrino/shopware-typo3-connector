@@ -37,5 +37,4 @@ class ApiCategoriesUrlDecorator extends ApiUrlDecorator
         }
         return $result;
     }
-
 }
